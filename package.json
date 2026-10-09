@@ -1,0 +1,25 @@
+{
+  "name": "rapo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @rapo/web",
+    "build": "npm run build --workspace @rapo/web",
+    "start": "npm run start --workspace @rapo/web",
+    "lint": "npm run lint --workspace @rapo/web",
+    "typecheck": "npm run typecheck --workspace @rapo/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "prettier": "^3.8.0"
+  }
+}

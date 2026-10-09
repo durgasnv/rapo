@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: npm ci
+      - run: uv sync --locked
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+      - run: docker compose --env-file .env.example config --quiet
+      - run: docker compose --env-file .env.example up -d --wait db
+      - run: docker compose --env-file .env.example exec -T db psql -U rapo -d rapo -c 'SELECT 1;'
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Stop database
+        if: always()
+        run: docker compose --env-file .env.example down

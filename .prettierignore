@@ -1,0 +1,12 @@
+node_modules
+.next
+next-env.d.ts
+.venv
+package-lock.json
+uv.lock
+docs/0000_idea.md
+docs/1000_requirement.md
+docs/1100_plan.md
+docs/AGENTS.md
+playwright-report
+test-results

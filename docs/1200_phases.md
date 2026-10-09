@@ -3,17 +3,26 @@
 **Pace:** ~1–2 hours/day, 5–6 days/week. **Target:** 8 weeks for a solid MVP; add 2–3 weeks buffer for deployment, debugging, and polish. Build vertically, not all frontend then all backend.
 
 ## Phase 0 — Scope and foundations (Days 1–3)
+
 **Goal:** Clear requirements and running development environment.
 
 - [ ] Review `1000_requirement.md` and resolve open decisions.
-- [ ] Create monorepo, Next.js web app, FastAPI API, local PostgreSQL with Docker Compose.
-- [ ] Configure formatting, linting, TypeScript checks, Python type checking, and CI.
-- [ ] Implement `/health` endpoint and frontend API connectivity.
+- [x] Create monorepo, Next.js web app, FastAPI API, local PostgreSQL with Docker Compose.
+- [x] Configure formatting, linting, TypeScript checks, Python type checking, and CI.
+- [x] Implement `/health` endpoint and frontend API connectivity.
 
 **Deliverable:** Frontend and backend run locally; first CI workflow passes.
 **Exit test:** Browser fetches live API health JSON.
 
+**Implementation status:** Foundation implemented. API and live-browser health/retry
+tests pass; PostgreSQL health and a test query passed locally on port 55432.
+Formatting, lint, types, and a production build passed, including checks from a
+fresh checkout under `/tmp` to avoid slow Windows-mounted filesystem reads.
+CI is configured; its first hosted run is pending. Product-policy decisions in
+the requirements remain open and must be resolved before the affected features.
+
 ## Phase 1 — Authentication and event management (Week 1–2)
+
 **Goal:** Real users can create and discover events.
 
 - [ ] Design SQLAlchemy models and first Alembic migration.
@@ -27,6 +36,7 @@
 **Exit test:** Non-owner cannot edit another organizer's event.
 
 ## Phase 2 — Registration and waitlist (Week 3)
+
 **Goal:** Participants can join events without race conditions.
 
 - [ ] Registration with uniqueness and eligibility checks.
@@ -39,6 +49,7 @@
 **Exit test:** Last available seat cannot be assigned twice under simultaneous requests.
 
 ## Phase 3 — Grouping engine (Weeks 4–5)
+
 **Goal:** Generate feasible, repeat-aware team proposals.
 
 - [ ] Derive pair collaboration frequencies from completed teams.
@@ -54,6 +65,7 @@
 **Exit test:** Every generated team satisfies size limits, with no missing or duplicated eligible users; infeasible cases are explained.
 
 ## Phase 4 — Finalization, confirmation, dropouts (Week 6)
+
 **Goal:** Convert proposals into dependable real assignments.
 
 - [ ] Transactional finalization and stale-proposal checks.
@@ -68,6 +80,7 @@
 **Exit test:** Withdrawals never create silent invalid teams or duplicate assignments.
 
 ## Phase 5 — Automation and deployment (Week 7)
+
 **Goal:** A stable, publicly usable demo.
 
 - [ ] Implement scheduled due-event processing with DB-backed locking/idempotency.
@@ -81,6 +94,7 @@
 **Exit test:** Scheduled grouping creates one proposal even if the worker retries.
 
 ## Phase 6 — Polish, measurement, portfolio packaging (Week 8)
+
 **Goal:** Make the project interview-ready.
 
 - [ ] Improve responsive layout, loading/empty/error states, and keyboard accessibility.
@@ -95,6 +109,7 @@
 **Exit test:** A reviewer can use the demo without needing setup help.
 
 ## Weekly cadence
+
 - **Day 1:** Choose one user-facing slice and acceptance test.
 - **Days 2–4:** Implement API, database, and UI for that slice.
 - **Day 5:** Add automated tests and edge cases.
@@ -102,22 +117,25 @@
 - **Day 7:** Rest or catch up.
 
 ## Milestone tracker
-| Milestone | Expected week | Proof |
-|---|---:|---|
-| M1: Auth + events | 2 | Organizer creates published event |
-| M2: Registration + waitlist | 3 | Concurrent capacity test passes |
-| M3: Valid grouping previews | 5 | Score report and invariant tests |
-| M4: Confirmations + dropouts | 6 | E2E lifecycle test passes |
-| M5: Public deployment | 7 | Live URL, working worker, seeded demo |
-| M6: Portfolio-ready release | 8 | README, video, benchmarks, CI green |
+
+| Milestone                    | Expected week | Proof                                 |
+| ---------------------------- | ------------: | ------------------------------------- |
+| M1: Auth + events            |             2 | Organizer creates published event     |
+| M2: Registration + waitlist  |             3 | Concurrent capacity test passes       |
+| M3: Valid grouping previews  |             5 | Score report and invariant tests      |
+| M4: Confirmations + dropouts |             6 | E2E lifecycle test passes             |
+| M5: Public deployment        |             7 | Live URL, working worker, seeded demo |
+| M6: Portfolio-ready release  |             8 | README, video, benchmarks, CI green   |
 
 ## Scope control
+
 **Must ship:** Authentication, events, registration, waitlist, history-aware grouping, preview/finalize, confirmation/withdrawal, tests, deployment.
 
 **Can defer:** Email, calendar sync, analytics dashboards, AI explanations, exact optimization for large groups, payment flows, organization billing.
 
 ## First task — Start here
-1. Create `rapo/apps/web` and `rapo/apps/api`.
+
+1. Create `apps/web` and `apps/api` inside the existing repository root.
 2. Run PostgreSQL locally with Docker Compose.
 3. Implement FastAPI `GET /health` returning `{ "status": "ok" }`.
 4. Render that response in a Next.js page.
