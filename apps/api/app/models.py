@@ -3,14 +3,17 @@ from typing import Literal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
+    JSON,
     BigInteger,
     CheckConstraint,
     DateTime,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -67,7 +70,11 @@ class Event(Base):
             "AND confirmation_deadline <= start_at",
             name="grouping_dates",
         ),
-        CheckConstraint("status IN ('DRAFT', 'PUBLISHED', 'CANCELLED')", name="event_status"),
+        CheckConstraint(
+            "status IN ('DRAFT', 'PUBLISHED', 'GROUPS_PROPOSED', 'GROUPS_FINALIZED', "
+            "'IN_PROGRESS', 'COMPLETED', 'CANCELLED')",
+            name="event_status",
+        ),
         Index("ix_events_status_start_at", "status", "start_at"),
     )
 
@@ -119,3 +126,74 @@ class AuditLog(Base):
     event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"), index=True)
     action: Mapped[str] = mapped_column(String(50))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class GroupingRun(Base):
+    __tablename__ = "grouping_runs"
+    __table_args__ = (
+        UniqueConstraint("event_id", "request_id", name="grouping_request"),
+        CheckConstraint("status IN ('PROPOSED', 'FINALIZED')", name="grouping_status"),
+        CheckConstraint("seed >= 0 AND seed <= 2147483647", name="grouping_seed"),
+        CheckConstraint(
+            "score >= 0 AND fairness >= 0 AND baseline_score >= 0 "
+            "AND baseline_fairness >= 0 AND evaluations >= 0",
+            name="grouping_score",
+        ),
+        CheckConstraint(
+            "min_team_size >= 1 AND max_team_size >= min_team_size", name="grouping_sizes"
+        ),
+        Index("ix_grouping_runs_event_created", "event_id", "created_at"),
+        Index(
+            "uq_finalized_grouping_event",
+            "event_id",
+            unique=True,
+            postgresql_where=text("status = 'FINALIZED'"),
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    request_id: Mapped[UUID]
+    created_by: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
+    status: Mapped[str] = mapped_column(String(20), default="PROPOSED")
+    algorithm_version: Mapped[str] = mapped_column(String(50))
+    seed: Mapped[int]
+    min_team_size: Mapped[int]
+    max_team_size: Mapped[int]
+    input_hash: Mapped[str] = mapped_column(String(64))
+    score: Mapped[int]
+    fairness: Mapped[int] = mapped_column(BigInteger)
+    baseline_score: Mapped[int]
+    baseline_fairness: Mapped[int] = mapped_column(BigInteger)
+    evaluations: Mapped[int]
+    history_snapshot: Mapped[list[list[str | int]]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Team(Base):
+    __tablename__ = "teams"
+    __table_args__ = (
+        UniqueConstraint("run_id", "number", name="team_run_number"),
+        UniqueConstraint("id", "run_id", name="team_id_run"),
+        CheckConstraint("number > 0", name="team_number"),
+        CheckConstraint("score >= 0", name="team_score"),
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    run_id: Mapped[UUID] = mapped_column(ForeignKey("grouping_runs.id"))
+    number: Mapped[int]
+    score: Mapped[int]
+    explanation: Mapped[str] = mapped_column(Text)
+
+
+class TeamMember(Base):
+    __tablename__ = "team_members"
+    __table_args__ = (
+        ForeignKeyConstraint(["team_id", "run_id"], ["teams.id", "teams.run_id"]),
+        UniqueConstraint("run_id", "user_id", name="member_run_user"),
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    team_id: Mapped[UUID]
+    run_id: Mapped[UUID] = mapped_column(ForeignKey("grouping_runs.id"))
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)

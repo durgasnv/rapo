@@ -133,7 +133,7 @@ function RegistrationControls({
               : `${data.capacity} seats`}
           </p>
           {!active &&
-            data.event_status === "PUBLISHED" &&
+            ["PUBLISHED", "GROUPS_PROPOSED"].includes(data.event_status) &&
             !data.registration_open && (
               <p className="mt-3">
                 Registration is not open. Check the schedule above.
@@ -141,7 +141,7 @@ function RegistrationControls({
             )}
           {active &&
             !data.withdrawal_open &&
-            data.event_status === "PUBLISHED" && (
+            ["PUBLISHED", "GROUPS_PROPOSED"].includes(data.event_status) && (
               <p className="mt-3">
                 Self-service withdrawal closed at the grouping time.
               </p>

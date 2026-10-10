@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
 import { EventForm } from "./event-form";
+import { GroupingPreview } from "./grouping-preview";
 import { OrganizerRoster } from "./organizer-roster";
 
 export function OrganizerEditor({ id }: { id?: string }) {
@@ -129,7 +130,9 @@ export function OrganizerEditor({ id }: { id?: string }) {
                         Cancel event
                       </button>
                     )}
-                    {event.status === "PUBLISHED" && (
+                    {["PUBLISHED", "GROUPS_PROPOSED"].includes(
+                      event.status,
+                    ) && (
                       <Link className="button" href={`/events/${event.id}`}>
                         View public event
                       </Link>
@@ -152,6 +155,20 @@ export function OrganizerEditor({ id }: { id?: string }) {
                     }}
                   />
                 </div>
+              )}
+              {event && (
+                <GroupingPreview
+                  key={`${event.id}:${account.user.id}`}
+                  event={event}
+                  csrfToken={account.csrf_token}
+                  onGenerated={async () => {
+                    setEvent(
+                      await apiRequest<EventData>(
+                        `/organizer/events/${event.id}`,
+                      ),
+                    );
+                  }}
+                />
               )}
               {event && (
                 <OrganizerRoster

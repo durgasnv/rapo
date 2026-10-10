@@ -73,24 +73,42 @@ promotion stop at the scheduled grouping time. Rejoining takes a new queue ticke
 Participant dashboards and private organizer rosters are paginated and refresh
 on request. Cancelled events remain visible in participants' own history.
 Verification used an isolated PostgreSQL 16 database and a Linux checkout with
-locked dependencies. Hosted CI/deployment remains unverified. Phase 3 is next;
-grouping, notifications, and post-grouping replacements are not implemented yet.
+locked dependencies. Hosted CI/deployment remains unverified. The Phase 3 checkpoint below records
+grouping previews; notifications and post-grouping replacements remain later work.
 
 ## Phase 3 — Grouping engine (Weeks 4–5)
 
 **Goal:** Generate feasible, repeat-aware team proposals.
 
-- [ ] Derive pair collaboration frequencies from completed teams.
-- [ ] Implement feasibility and valid team-size partition logic.
-- [ ] Build baseline random assignment and score it.
-- [ ] Implement seeded greedy grouping and swap/move improvement.
-- [ ] Handle everyone-worked-with-everyone and partial-overlap cases.
-- [ ] Store proposal, score, seed, and per-team explanations.
-- [ ] Add property-based and hand-calculated unit tests.
-- [ ] Build organizer grouping preview UI.
+- [x] Derive pair collaboration frequencies from completed teams.
+- [x] Implement feasibility and valid team-size partition logic.
+- [x] Build baseline random assignment and score it.
+- [x] Implement seeded greedy grouping and swap/move improvement.
+- [x] Handle everyone-worked-with-everyone and partial-overlap cases.
+- [x] Store proposal, score, seed, and per-team explanations.
+- [x] Add property-based and hand-calculated unit tests.
+- [x] Build organizer grouping preview UI.
 
 **Deliverable:** Organizer sees proposed teams and why they were chosen.
 **Exit test:** Every generated team satisfies size limits, with no missing or duplicated eligible users; infeasible cases are explained.
+
+**Implementation status (2026-10-10):** Phase 3 implemented with owner-only
+manual previews after registration closes, completed-event pair history, balanced
+team-size selection, seeded greedy/swap/move search, fairness tie-breaking,
+persistent input snapshots, and stale/retry handling. The engine supports at most
+100 eligible participants and bounds search work deterministically. Existing
+withdrawal/promotion remains available before the scheduled grouping cutoff.
+Finalization/completion APIs and scheduled generation remain in later phases;
+completed historical memberships are exercised through trusted test fixtures.
+
+Verification passed: 75 backend tests (18 engine and 16 grouping API tests added),
+seven live-browser tests, migration/schema comparison, Python/web formatting,
+lint, type checks, and the production frontend build. The final snapshot schema
+was checked again with the backend suite and targeted grouping browser flow.
+Tests used isolated PostgreSQL 16 databases and separate browser-server ports.
+A seeded 100-person benchmark took about 0.07 seconds with sizes 3–5 and 0.92
+seconds with sizes 50–100 on this machine; these are engine measurements, not API
+latency guarantees. Hosted CI/deployment remains unverified. Phase 4 is next.
 
 ## Phase 4 — Finalization, confirmation, dropouts (Week 6)
 

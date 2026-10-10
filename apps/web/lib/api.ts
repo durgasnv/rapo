@@ -43,7 +43,9 @@ export async function apiRequest<T>(
                   `${item.loc?.slice(1).join(".") || "Form"}: ${item.msg}`,
               )
               .join("; ")
-          : "Something went wrong. Please try again.";
+          : typeof detail?.message === "string"
+            ? detail.message
+            : "Something went wrong. Please try again.";
     throw new ApiError(response.status, message);
   }
   if (response.status === 204) return undefined as T;
@@ -76,7 +78,14 @@ export type EventData = {
   capacity: number | null;
   min_team_size: number;
   max_team_size: number;
-  status: "DRAFT" | "PUBLISHED" | "CANCELLED";
+  status:
+    | "DRAFT"
+    | "PUBLISHED"
+    | "GROUPS_PROPOSED"
+    | "GROUPS_FINALIZED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "CANCELLED";
   version: number;
 };
 

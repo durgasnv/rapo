@@ -5,7 +5,7 @@
 rapo. is a web platform for event registration and fair, history-aware team
 formation. The current implementation includes accounts, secure sessions,
 organizer-owned event drafts, publication/cancellation, public discovery,
-participant registration, and FIFO waitlists. Team formation is the next phase.
+participant registration, FIFO waitlists, and history-aware grouping previews.
 
 ## Prerequisites
 
@@ -71,6 +71,13 @@ the promotion. **My account** shows participant statuses; the organizer's event
 management page shows the private roster. Rejoining after withdrawal puts a user
 at the back of the queue.
 
+To try grouping, open an owned event after registration closes and select
+**Generate team preview**. The preview covers active registered participants,
+chooses balanced team sizes, and reduces repeated partnerships from completed
+team history. It supports up to 100 participants and saves its seed and scores.
+Teams remain proposals; finalization and confirmations are the next phase.
+See [grouping previews](docs/features/grouping-preview.md) for the full flow and limits.
+
 ## Configuration
 
 | Variable                                            | Where                   | Purpose                                                                                  |
@@ -127,7 +134,8 @@ in the test database; they must never point to a production database.
 The browser tests start their own API and frontend on ports 8000 and 3000. Stop
 existing development servers first. They verify health/retry, signup/login/logout,
 session persistence, organizer draft/edit/publish/cancel flows, registration,
-FIFO promotion, unlimited capacity, and participant/organizer status screens. CI starts
+FIFO promotion, unlimited capacity, participant/organizer status screens, grouping
+previews, lost-response retries, and stale/infeasible proposals. CI starts
 PostgreSQL, migrates its test database, and runs these checks.
 
 Use `npm run format` for web/config/document formatting and `uv run ruff format .`
@@ -148,10 +156,13 @@ credentials. Do not remove the volume unless you intend to delete its data.
   [event management](docs/features/event-management.md): Phase 1 behavior.
 - [Event registration and waitlists](docs/features/event-registration.md): Phase 2
   behavior, retry semantics, privacy, and current limits.
+- [Grouping previews](docs/features/grouping-preview.md) and
+  [grouping algorithm](docs/concepts/grouping-algorithm.md): Phase 3 behavior,
+  scoring, edge cases, and reproducibility.
 - [Transactions and concurrency](docs/concepts/transaction-and-concurrency.md): why
   event locks prevent overselling and keep promotions atomic.
 - [Requirements](docs/1000_requirement.md), [technical plan](docs/1100_plan.md), and
   [development phases](docs/1200_phases.md): the product roadmap.
 
-Phase 2 is implemented. Phase 3 adds history-aware grouping previews.
+Phases 1–3 are implemented. Phase 4 adds finalization, confirmations, and dropout handling.
 Password reset remains an MVP requirement. No deployment is configured yet.

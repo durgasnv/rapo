@@ -75,7 +75,9 @@ export function ParticipantRegistrations() {
                 {data.items.map((registration) => (
                   <li key={registration.id} className="py-4">
                     <h3 className="font-semibold">
-                      {registration.event.status === "PUBLISHED" ? (
+                      {["PUBLISHED", "GROUPS_PROPOSED"].includes(
+                        registration.event.status,
+                      ) ? (
                         <Link
                           className="underline"
                           href={`/events/${registration.event_id}`}

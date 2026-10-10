@@ -67,14 +67,15 @@ def state(db: Session, event: Event, registration: Registration | None) -> Regis
         capacity=event.capacity,
         registration_open=event.status == "PUBLISHED"
         and event.registration_opens_at <= now < event.registration_closes_at,
-        withdrawal_open=event.status == "PUBLISHED" and now < event.grouping_at,
+        withdrawal_open=event.status in {"PUBLISHED", "GROUPS_PROPOSED"}
+        and now < event.grouping_at,
         event_status=event.status,
     )
 
 
 def join(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
     event = lock_event(db, event_id)
-    if event.status != "PUBLISHED":
+    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"}:
         raise HTTPException(404, "Published event not found")
     registration = find_registration(db, event, user_id)
     # Retrying an existing successful join does not change its queue priority.
@@ -109,11 +110,11 @@ def join(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
 def withdraw(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
     event = lock_event(db, event_id)
     registration = find_registration(db, event, user_id)
-    if event.status != "PUBLISHED" and registration is None:
+    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} and registration is None:
         raise HTTPException(404, "Event not found")
     if registration is None or registration.status == "CANCELLED":
         return state(db, event, registration)
-    if event.status != "PUBLISHED" or utcnow() >= event.grouping_at:
+    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} or utcnow() >= event.grouping_at:
         raise HTTPException(
             409, "Self-service withdrawal is available only before grouping on an active event"
         )
