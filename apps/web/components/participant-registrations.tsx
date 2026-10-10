@@ -75,9 +75,11 @@ export function ParticipantRegistrations() {
                 {data.items.map((registration) => (
                   <li key={registration.id} className="py-4">
                     <h3 className="font-semibold">
-                      {["PUBLISHED", "GROUPS_PROPOSED"].includes(
-                        registration.event.status,
-                      ) ? (
+                      {[
+                        "PUBLISHED",
+                        "GROUPS_PROPOSED",
+                        "GROUPS_FINALIZED",
+                      ].includes(registration.event.status) ? (
                         <Link
                           className="underline"
                           href={`/events/${registration.event_id}`}
@@ -93,6 +95,15 @@ export function ParticipantRegistrations() {
                         ? "Event cancelled"
                         : registrationLabel(registration)}
                     </p>
+                    {registration.event.status === "GROUPS_FINALIZED" &&
+                      registration.status === "REGISTERED" && (
+                        <Link
+                          className="underline"
+                          href={`/events/${registration.event_id}`}
+                        >
+                          View your team and confirm
+                        </Link>
+                      )}
                     <p className="mt-2 text-sm">
                       {formatDate(
                         registration.event.start_at,

@@ -35,14 +35,16 @@ def list_events(
     db: Db,
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
-    status: Literal["PUBLISHED", "GROUPS_PROPOSED"] | None = None,
+    status: Literal["PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"] | None = None,
     date_from: date | None = None,
     date_to: date | None = None,
 ) -> EventPage:
     if date_from and date_to and date_from > date_to:
         raise HTTPException(422, "Start date must not be after end date")
     query = select(Event).where(
-        Event.status.in_([status] if status else ["PUBLISHED", "GROUPS_PROPOSED"])
+        Event.status.in_(
+            [status] if status else ["PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"]
+        )
     )
     if date_from:
         query = query.where(Event.start_at >= datetime.combine(date_from, time.min, UTC))
@@ -82,7 +84,7 @@ def get_owned_event(event_id: UUID, organizer: Organizer, db: Db) -> EventOut:
 @router.get("/events/{event_id}", response_model=EventOut)
 def get_public_event(event_id: UUID, db: Db) -> EventOut:
     event = db.get(Event, event_id)
-    if event is None or event.status not in {"PUBLISHED", "GROUPS_PROPOSED"}:
+    if event is None or event.status not in {"PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"}:
         raise HTTPException(404, "Event not found")
     return EventOut.model_validate(event)
 
@@ -139,8 +141,10 @@ def publish_event(event_id: UUID, body: VersionInput, organizer: Organizer, db: 
 def cancel_event(event_id: UUID, body: VersionInput, organizer: Organizer, db: Db) -> EventOut:
     event = owned_event(event_id, organizer, db)
     check_version(event, body.version)
-    if event.status not in {"DRAFT", "PUBLISHED", "GROUPS_PROPOSED"}:
+    if event.status not in {"DRAFT", "PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"}:
         raise HTTPException(409, "This event cannot be cancelled")
+    if event.status == "GROUPS_FINALIZED" and utcnow() >= event.start_at:
+        raise HTTPException(409, "Cannot cancel a finalized event after it starts")
     event.status = "CANCELLED"
     event.version += 1
     record_action(db, event, organizer, "event.cancelled")

@@ -22,9 +22,10 @@ and capacity when an action arrives.
 ## Windows, withdrawal, and retries
 
 - A new join is allowed at registration opening, up to but excluding closing.
-- Withdrawal and automatic promotion are allowed strictly before `grouping_at`
-  while the event is published. This also permits promotion after registration
-  closes, if grouping is later. No new joins are allowed after closing.
+- Withdrawal is allowed before event start. Before finalization, it promotes the
+  oldest waitlisted person atomically, including after registration closes or the
+  scheduled grouping time. After finalization, promotion requires organizer
+  approval through the team-repair flow. No new joins are allowed after closing.
 - Withdrawing a registered participant promotes the oldest remaining waitlisted
   participant in the same transaction. Withdrawing from the waitlist frees no
   seat; remaining positions simply compact.
@@ -38,21 +39,20 @@ and capacity when an action arrives.
   registration records remain as history. The dashboard displays **Event
   cancelled**, overriding the stored pre-cancellation registration status.
 
-Freezing self-service changes at the scheduled grouping time is this phase's
-boundary. There is no grouping worker yet. Phase 4 will add withdrawal and
-replacement rules around real proposals and finalized teams. The event still has
-status `PUBLISHED` after registration closes; the timestamps enforce the window
-without a scheduler changing its status.
+Phase 4 extends the original Phase 2 cutoff to event start and adds explicit
+repair for finalized teams. See [team lifecycle](team-lifecycle.md) for confirmation,
+withdrawal, replacement, and reconfirmation rules. There is no grouping worker yet;
+timestamps enforce registration windows without a scheduler changing status.
 
 ## API and request flow
 
-| Method | Endpoint                     | Access                | Result                                                                 |
-| ------ | ---------------------------- | --------------------- | ---------------------------------------------------------------------- |
-| GET    | `/events/{id}/registration`  | Signed-in user        | Own status, counts, capacity, and open/closed flags                    |
-| POST   | `/events/{id}/register`      | Signed-in user + CSRF | Register, waitlist, or return existing active registration             |
-| DELETE | `/events/{id}/registration`  | Signed-in user + CSRF | Withdraw and promote atomically, or return an already-withdrawn result |
-| GET    | `/me/registrations`          | Signed-in user        | Paginated own registrations with event information                     |
-| GET    | `/events/{id}/registrations` | Owning organizer      | Paginated roster and registered/waitlisted counts                      |
+| Method | Endpoint                     | Access                | Result                                                                   |
+| ------ | ---------------------------- | --------------------- | ------------------------------------------------------------------------ |
+| GET    | `/events/{id}/registration`  | Signed-in user        | Own status, counts, capacity, and open/closed flags                      |
+| POST   | `/events/{id}/register`      | Signed-in user + CSRF | Register, waitlist, or return existing active registration               |
+| DELETE | `/events/{id}/registration`  | Signed-in user + CSRF | Withdraw; promote before finalization, or flag finalized team for repair |
+| GET    | `/me/registrations`          | Signed-in user        | Paginated own registrations with event information                       |
+| GET    | `/events/{id}/registrations` | Owning organizer      | Paginated roster and registered/waitlisted counts                        |
 
 Lists default to 20 rows and accept `offset >= 0` and `1 <= limit <= 100`.
 The roster groups registered users, waitlisted users in FIFO order, then withdrawn
@@ -116,7 +116,7 @@ events or the owning organizer's roster.
 ## Verification
 
 PostgreSQL tests cover capacity and uncapped events, FIFO and rejoining, duplicate
-requests, opening/closing/grouping boundaries, promotion after cutoff, event
+requests, opening/closing/event-start boundaries, promotion after cutoff, event
 cancellation, database constraints, pagination, authorization, CSRF/CORS, caching,
 and rollback after a failed withdrawal. Concurrent HTTP requests use separate
 database sessions and committed fixtures in an isolated test schema, exercising

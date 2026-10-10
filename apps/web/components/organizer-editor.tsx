@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
 import { EventForm } from "./event-form";
+import { TeamRoster } from "./team-roster";
 import { GroupingPreview } from "./grouping-preview";
 import { OrganizerRoster } from "./organizer-roster";
 
@@ -130,9 +131,11 @@ export function OrganizerEditor({ id }: { id?: string }) {
                         Cancel event
                       </button>
                     )}
-                    {["PUBLISHED", "GROUPS_PROPOSED"].includes(
-                      event.status,
-                    ) && (
+                    {[
+                      "PUBLISHED",
+                      "GROUPS_PROPOSED",
+                      "GROUPS_FINALIZED",
+                    ].includes(event.status) && (
                       <Link className="button" href={`/events/${event.id}`}>
                         View public event
                       </Link>
@@ -170,6 +173,19 @@ export function OrganizerEditor({ id }: { id?: string }) {
                   }}
                 />
               )}
+              {event &&
+                ["GROUPS_FINALIZED", "CANCELLED"].includes(event.status) && (
+                  <TeamRoster
+                    event={event}
+                    onChanged={async () => {
+                      setEvent(
+                        await apiRequest<EventData>(
+                          `/organizer/events/${event.id}`,
+                        ),
+                      );
+                    }}
+                  />
+                )}
               {event && (
                 <OrganizerRoster
                   key={`${event.id}:${event.version}`}

@@ -5,7 +5,8 @@
 rapo. is a web platform for event registration and fair, history-aware team
 formation. The current implementation includes accounts, secure sessions,
 organizer-owned event drafts, publication/cancellation, public discovery,
-participant registration, FIFO waitlists, and history-aware grouping previews.
+participant registration, FIFO waitlists, history-aware grouping previews,
+finalized assignments, confirmations, withdrawals, and organizer roster repair.
 
 ## Prerequisites
 
@@ -75,7 +76,10 @@ To try grouping, open an owned event after registration closes and select
 **Generate team preview**. The preview covers active registered participants,
 chooses balanced team sizes, and reduces repeated partnerships from completed
 team history. It supports up to 100 participants and saves its seed and scores.
-Teams remain proposals; finalization and confirmations are the next phase.
+Select **Finalize these teams** to approve a fresh proposal before the confirmation
+deadline. Participants can then open their team from **My account** and confirm
+or decline. The final roster provides vacancy repair, deadline extensions,
+validated reassignment, and CSV export.
 See [grouping previews](docs/features/grouping-preview.md) for the full flow and limits.
 
 ## Configuration
@@ -135,7 +139,8 @@ The browser tests start their own API and frontend on ports 8000 and 3000. Stop
 existing development servers first. They verify health/retry, signup/login/logout,
 session persistence, organizer draft/edit/publish/cancel flows, registration,
 FIFO promotion, unlimited capacity, participant/organizer status screens, grouping
-previews, lost-response retries, and stale/infeasible proposals. CI starts
+previews, lost-response retries, stale/infeasible proposals, and finalization through
+confirmation, dropout, replacement, reassignment, deadline extension, and CSV export. CI starts
 PostgreSQL, migrates its test database, and runs these checks.
 
 Use `npm run format` for web/config/document formatting and `uv run ruff format .`
@@ -159,10 +164,12 @@ credentials. Do not remove the volume unless you intend to delete its data.
 - [Grouping previews](docs/features/grouping-preview.md) and
   [grouping algorithm](docs/concepts/grouping-algorithm.md): Phase 3 behavior,
   scoring, edge cases, and reproducibility.
+- [Final teams and roster repair](docs/features/team-lifecycle.md): Phase 4
+  policies, participant actions, owner controls, and recovery.
 - [Transactions and concurrency](docs/concepts/transaction-and-concurrency.md): why
   event locks prevent overselling and keep promotions atomic.
 - [Requirements](docs/1000_requirement.md), [technical plan](docs/1100_plan.md), and
   [development phases](docs/1200_phases.md): the product roadmap.
 
-Phases 1–3 are implemented. Phase 4 adds finalization, confirmations, and dropout handling.
+Phases 1–4 are implemented. Phase 5 adds scheduled processing, notifications, and deployment.
 Password reset remains an MVP requirement. No deployment is configured yet.

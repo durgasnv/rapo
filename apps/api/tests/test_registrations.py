@@ -150,8 +150,10 @@ def test_registration_windows_and_promotion_after_close(client: TestClient, db: 
     )
     event.grouping_at = utcnow() - timedelta(hours=1)
     db.commit()
-    assert client.delete(f"/events/{event_id}/registration").status_code == 409
-    assert not client.get(f"/events/{event_id}/registration").json()["withdrawal_open"]
+    assert client.get(f"/events/{event_id}/registration").json()["withdrawal_open"]
+    with patch("app.services.registrations.utcnow", return_value=event.start_at):
+        assert client.delete(f"/events/{event_id}/registration").status_code == 409
+        assert not client.get(f"/events/{event_id}/registration").json()["withdrawal_open"]
 
 
 def test_not_open_yet_and_drafts_are_not_joinable(client: TestClient, db: Session) -> None:
@@ -191,11 +193,11 @@ def test_exact_registration_and_withdrawal_boundaries(client: TestClient, db: Se
     ):
         assert join(client, event_id)["registration"]["status"] == "WAITLISTED"
     login(client, "boundary-first@example.com")
-    with patch("app.services.registrations.utcnow", return_value=event.grouping_at):
+    with patch("app.services.registrations.utcnow", return_value=event.start_at):
         assert client.delete(f"/events/{event_id}/registration").status_code == 409
     with patch(
         "app.services.registrations.utcnow",
-        return_value=event.grouping_at - timedelta(microseconds=1),
+        return_value=event.start_at - timedelta(microseconds=1),
     ):
         assert client.delete(f"/events/{event_id}/registration").json()["registered_count"] == 1
 

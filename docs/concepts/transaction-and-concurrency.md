@@ -68,3 +68,19 @@ waitlist withdrawal racing with promotion, and a new join racing with withdrawal
 
 This verifies transaction correctness at the MVP scale. It is not a throughput
 benchmark or evidence that the service handles arbitrary load.
+
+## Finalized rosters
+
+Phase 4 takes the same event lock for finalization, confirmation, withdrawal,
+replacement, reassignment, deadline extension, and cancellation. One transaction
+updates assignments, registrations, team versions/targets, event version, and
+before/after audit records. Owner mutation request IDs are recorded in the same
+transaction so a lost-response retry cannot promote another person. Stale event
+versions reject concurrent owner edits, and team versions reject confirmation of
+previous teammates. A database unique constraint prevents duplicate event/user
+assignments, while the existing partial index prevents two finalized runs.
+
+Tests issue simultaneous same-run/different-run finalizations and same-ID/different-ID
+vacancy replacements through separate HTTP sessions. Successful retries reuse the
+committed result; competing intents receive 409 and must refresh. The original
+proposal memberships remain unchanged by these operations.

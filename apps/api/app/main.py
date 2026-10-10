@@ -11,7 +11,7 @@ from starlette.middleware.base import RequestResponseEndpoint
 
 from app.core.config import Settings
 from app.db import make_engine
-from app.routers import auth, events, grouping, registrations
+from app.routers import auth, events, grouping, registrations, teams
 
 
 class HealthResponse(BaseModel):
@@ -38,6 +38,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             request.url.path == "/me"
             or request.url.path.startswith(("/auth/", "/organizer/", "/me/"))
             or "/grouping-runs" in request.url.path
+            or "/teams" in request.url.path
             or request.url.path.endswith(("/registration", "/registrations", "/register"))
         ):
             response.headers["Cache-Control"] = "no-store"
@@ -72,6 +73,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(events.router)
     application.include_router(registrations.router)
     application.include_router(grouping.router)
+    application.include_router(teams.router)
     return application
 
 

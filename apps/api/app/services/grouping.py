@@ -6,7 +6,18 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, aliased
 
-from app.models import AuditLog, Event, GroupingRun, Registration, Team, TeamMember, User, utcnow
+from app.models import (
+    Assignment,
+    AuditLog,
+    Event,
+    FinalTeam,
+    GroupingRun,
+    Registration,
+    Team,
+    TeamMember,
+    User,
+    utcnow,
+)
 from app.schemas.grouping import GroupingInput, GroupingOut, MemberOut, TeamOut
 from app.services.grouping_engine import ALGORITHM_VERSION, Pair, generate, score, team_sizes
 from app.services.registrations import lock_event
@@ -45,10 +56,34 @@ def inputs(db: Session, event: Event) -> tuple[list[UUID], dict[Pair, int], str]
             Event.id != event.id,
             Event.end_at <= utcnow(),
             Event.end_at <= event.start_at,
+            ~select(FinalTeam.id).where(FinalTeam.event_id == Event.id).exists(),
         )
         .group_by(first.user_id, second.user_id)
     )
     history = {(a, b): count for a, b, count in rows}
+    a, b = aliased(Assignment), aliased(Assignment)
+    final_rows = db.execute(
+        select(a.user_id, b.user_id, func.count(func.distinct(Event.id)))
+        .select_from(a)
+        .join(b, (a.team_id == b.team_id) & (a.user_id < b.user_id))
+        .join(FinalTeam, FinalTeam.id == a.team_id)
+        .join(GroupingRun, GroupingRun.id == FinalTeam.run_id)
+        .join(Event, Event.id == a.event_id)
+        .where(
+            a.user_id.in_(participants),
+            b.user_id.in_(participants),
+            a.status.in_(["PENDING", "CONFIRMED"]),
+            b.status.in_(["PENDING", "CONFIRMED"]),
+            GroupingRun.status == "FINALIZED",
+            Event.status == "COMPLETED",
+            Event.id != event.id,
+            Event.end_at <= utcnow(),
+            Event.end_at <= event.start_at,
+        )
+        .group_by(a.user_id, b.user_id)
+    )
+    for a_id, b_id, count in final_rows:
+        history[a_id, b_id] = history.get((a_id, b_id), 0) + count
     snapshot = {
         "participants": [str(person) for person in participants],
         "sizes": [event.min_team_size, event.max_team_size],
@@ -64,7 +99,9 @@ def history_json(history: dict[Pair, int]) -> list[list[str | int]]:
 
 def output(db: Session, event: Event, run: GroupingRun, fingerprint: str) -> GroupingOut:
     reason = None
-    if event.status not in ACTIVE_STATUSES:
+    if run.status == "FINALIZED":
+        reason = None
+    elif event.status not in ACTIVE_STATUSES:
         reason = "This event is no longer available for grouping."
     elif utcnow() >= event.start_at:
         reason = "This event has already started."
@@ -178,6 +215,8 @@ def read(db: Session, event_id: UUID, organizer: User, run_id: UUID | None) -> G
     query = select(GroupingRun).where(GroupingRun.event_id == event.id)
     if run_id is not None:
         query = query.where(GroupingRun.id == run_id)
+    elif event.status == "GROUPS_FINALIZED":
+        query = query.where(GroupingRun.status == "FINALIZED")
     run = db.scalar(query.order_by(GroupingRun.created_at.desc(), GroupingRun.id.desc()).limit(1))
     if run is None:
         if run_id is not None:

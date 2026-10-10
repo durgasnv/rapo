@@ -2,8 +2,9 @@
 
 Phase 3 lets an event owner generate, reload, and review proposed teams after
 registration closes and before the event starts. Proposals do not finalize
-assignments or notify participants. Finalization, confirmations, replacements,
-and scheduled processing remain in later phases.
+assignments or notify participants automatically. Phase 4 adds explicit
+[finalization, confirmations, and replacements](team-lifecycle.md); scheduled
+processing remains Phase 5.
 
 ## Try it
 
@@ -52,8 +53,10 @@ even with the same seed.
 
 ## Collaboration history
 
-History is derived from memberships in `FINALIZED` grouping runs for `COMPLETED`
-events that ended before both the current time and the target event's start.
+History uses active final assignments for `COMPLETED` events whose grouping run
+is `FINALIZED`. For legacy completed events without a separate final roster, it
+uses the approved proposal memberships. Events must have ended before both the
+current time and the target event's start.
 Each unordered pair counts once per completed event. Cancelled events, proposed
 runs, current-event proposals, and events that have not ended never count.
 An event can have at most one finalized run, enforced by a partial unique index.
@@ -62,10 +65,11 @@ The service stores relevant pair frequencies and original size limits as a priva
 hashes them with eligible IDs and team-size limits. A changed hash marks the old
 proposal stale without editing its membership. Cancellation and event start also
 make the preview unavailable for further grouping. The UI displays stale status
-when fetched or refreshed; it does not poll. Phase 4 must revalidate the snapshot
-under the event lock before finalization, even if the browser shows a fresh preview.
+when fetched or refreshed; it does not poll. Phase 4 revalidates the snapshot
+under the event lock before finalization, even if the browser shows a fresh preview. Approved previews
+remain immutable snapshots; current assignments are shown separately in the final roster.
 
-There is no event completion/finalization API in Phase 3. Normal existing accounts
+Phase 4 adds finalization, but event completion is not implemented yet. Existing accounts
 therefore start with empty history until later lifecycle work or trusted demo
 fixtures supply completed memberships. The tests supply explicit historical
 fixtures; proposals never become history simply because they were generated.
@@ -84,7 +88,7 @@ fixtures; proposals never become history simply because they were generated.
 | One person knows everyone         | Minimize frequency; distribute burden among equal-cost results                                                     |
 | Equal histories                   | Seeded reproducible ties; no claim that one arbitrary tie is intrinsically fairer                                  |
 | Waitlisted/cancelled registration | Excluded from eligible participants                                                                                |
-| Pre-grouping withdrawal/promotion | Existing Phase 2 transaction remains available before `grouping_at`; old previews become stale                     |
+| Pre-grouping withdrawal/promotion | Before finalization, Phase 4 permits withdrawal/promotion until event start; old previews become stale             |
 | Registration/history changes      | Preserve old preview, flag stale, require regeneration                                                             |
 | Concurrent/retried generation     | Event lock and unique request ID prevent duplicate retry results                                                   |
 | Invalid/duplicate source data     | Run-level membership uniqueness, composite team/run foreign key, finalized-run uniqueness, distinct event counting |
@@ -94,7 +98,7 @@ fixtures; proposals never become history simply because they were generated.
 
 Skill balancing, availability matching, and mandatory/prohibited participant pairs
 need explicit product rules and are excluded. Post-finalization dropouts,
-confirmation declines, and replacements belong to Phase 4.
+confirmation declines, and replacements are described in the Phase 4 team lifecycle.
 
 ## Verification and recovery
 

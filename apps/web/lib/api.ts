@@ -144,3 +144,27 @@ export function formatDate(value: string, timezone: string): string {
     timeZone: timezone,
   }).format(new Date(value));
 }
+
+export type FinalRoster = {
+  event_id: string;
+  event_status: EventData["status"];
+  version: number;
+  confirmation_deadline: string;
+  confirmation_open: boolean;
+  withdrawal_open: boolean;
+  own_status: string | null;
+  teams: {
+    id: string;
+    number: number;
+    version: number;
+    target_size: number;
+    status: "READY" | "AWAITING_CONFIRMATIONS" | "NEEDS_ATTENTION";
+    reasons: string[];
+    members: {
+      user_id: string;
+      name: string;
+      status: string;
+      confirmed_at: string | null;
+    }[];
+  }[];
+};

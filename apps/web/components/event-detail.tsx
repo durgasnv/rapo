@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
+import { TeamRoster } from "./team-roster";
 import { EventRegistration } from "./event-registration";
 
 export function EventDetail({ id }: { id: string }) {
@@ -79,6 +80,9 @@ export function EventDetail({ id }: { id: string }) {
               </div>
             </dl>
             <EventRegistration event={event} />
+            {event.status === "GROUPS_FINALIZED" && (
+              <TeamRoster event={event} />
+            )}
           </section>
         </>
       )}

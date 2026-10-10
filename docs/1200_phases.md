@@ -114,16 +114,32 @@ latency guarantees. Hosted CI/deployment remains unverified. Phase 4 is next.
 
 **Goal:** Convert proposals into dependable real assignments.
 
-- [ ] Transactional finalization and stale-proposal checks.
-- [ ] Participant confirmation and decline.
-- [ ] Withdrawal before/after grouping.
-- [ ] Waitlist replacement and `NEEDS_ATTENTION` state.
-- [ ] Manual organizer reassignment with validation and audit trail.
-- [ ] Final roster and CSV export.
-- [ ] End-to-end tests for dropout and replacement paths.
+- [x] Transactional finalization and stale-proposal checks.
+- [x] Participant confirmation and decline.
+- [x] Withdrawal before/after grouping.
+- [x] Waitlist replacement and `NEEDS_ATTENTION` state.
+- [x] Manual organizer reassignment with validation and audit trail.
+- [x] Final roster and CSV export.
+- [x] End-to-end tests for dropout and replacement paths.
 
 **Deliverable:** Full event lifecycle from registration through confirmation.
 **Exit test:** Withdrawals never create silent invalid teams or duplicate assignments.
+
+**Implementation status (2026-10-10):** Phase 4 implements separate final teams
+and assignments, atomic freshness-checked finalization, private team confirmation,
+decline and withdrawal, explicit FIFO replacements, validated moves/swaps,
+continuation approval, deadline extension, audit snapshots, and owner CSV export.
+Missed deadlines keep members pending and flag attention. Teammate changes reset
+confirmations; withdrawals before finalization now remain open until event start.
+The approved preview stays unchanged beside the current roster.
+
+Verification passed: 91 backend tests (16 new lifecycle tests), eight live-browser
+tests, migration/schema comparison, Python/web formatting, lint, type checks, and
+the production frontend build. Tests used an isolated PostgreSQL database and
+separate browser-server ports. Hosted CI and
+deployment remain unverified. Event completion APIs are still a later lifecycle
+extension; scheduled processing and notifications are the next milestone.
+See [team-lifecycle.md](features/team-lifecycle.md) for behavior and recovery.
 
 ## Phase 5 — Automation and deployment (Week 7)
 

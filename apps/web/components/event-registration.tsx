@@ -133,7 +133,9 @@ function RegistrationControls({
               : `${data.capacity} seats`}
           </p>
           {!active &&
-            ["PUBLISHED", "GROUPS_PROPOSED"].includes(data.event_status) &&
+            ["PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"].includes(
+              data.event_status,
+            ) &&
             !data.registration_open && (
               <p className="mt-3">
                 Registration is not open. Check the schedule above.
@@ -141,9 +143,17 @@ function RegistrationControls({
             )}
           {active &&
             !data.withdrawal_open &&
-            ["PUBLISHED", "GROUPS_PROPOSED"].includes(data.event_status) && (
+            ["PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"].includes(
+              data.event_status,
+            ) && (
               <p className="mt-3">
-                Self-service withdrawal closed at the grouping time.
+                Self-service withdrawal closed at event start.
+              </p>
+            )}
+          {data.event_status === "GROUPS_FINALIZED" &&
+            data.registration?.status === "REGISTERED" && (
+              <p className="mt-3">
+                Use your team below to confirm or withdraw.
               </p>
             )}
           <div className="mt-4 flex flex-wrap gap-4">
@@ -161,15 +171,20 @@ function RegistrationControls({
                     : "Register for event"}
               </button>
             )}
-            {active && data.withdrawal_open && (
-              <button
-                className="button"
-                disabled={busy}
-                onClick={() => void update("withdraw")}
-              >
-                Withdraw registration
-              </button>
-            )}
+            {active &&
+              data.withdrawal_open &&
+              !(
+                data.event_status === "GROUPS_FINALIZED" &&
+                data.registration?.status === "REGISTERED"
+              ) && (
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() => void update("withdraw")}
+                >
+                  Withdraw registration
+                </button>
+              )}
           </div>
         </>
       )}
@@ -186,8 +201,8 @@ function RegistrationControls({
         Refresh registration
       </button>
       <p className="mt-3 text-sm text-stone-600">
-        Refresh to check for a waitlist promotion. Withdrawing and rejoining
-        puts you at the back of the queue.
+        Refresh to check your registration. Withdrawing and rejoining puts you
+        at the back of the queue.
       </p>
     </section>
   );

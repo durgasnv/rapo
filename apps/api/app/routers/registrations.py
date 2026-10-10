@@ -42,7 +42,10 @@ def queue_position() -> ScalarSelect[int]:
 def my_event_registration(event_id: UUID, identity: CurrentIdentity, db: Db) -> RegistrationState:
     event = service.lock_event(db, event_id, shared=True)
     registration = service.find_registration(db, event, identity.user.id)
-    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} and registration is None:
+    if (
+        event.status not in {"PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"}
+        and registration is None
+    ):
         raise HTTPException(404, "Event not found")
     return service.state(db, event, registration)
 

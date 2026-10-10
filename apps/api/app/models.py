@@ -125,6 +125,8 @@ class AuditLog(Base):
     actor_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
     event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"), index=True)
     action: Mapped[str] = mapped_column(String(50))
+    before_json: Mapped[dict[str, object] | None] = mapped_column(JSON)
+    after_json: Mapped[dict[str, object] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
@@ -132,6 +134,7 @@ class GroupingRun(Base):
     __tablename__ = "grouping_runs"
     __table_args__ = (
         UniqueConstraint("event_id", "request_id", name="grouping_request"),
+        UniqueConstraint("id", "event_id", name="grouping_id_event"),
         CheckConstraint("status IN ('PROPOSED', 'FINALIZED')", name="grouping_status"),
         CheckConstraint("seed >= 0 AND seed <= 2147483647", name="grouping_seed"),
         CheckConstraint(
@@ -197,3 +200,49 @@ class TeamMember(Base):
     team_id: Mapped[UUID]
     run_id: Mapped[UUID] = mapped_column(ForeignKey("grouping_runs.id"))
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
+
+
+class FinalTeam(Base):
+    __tablename__ = "final_teams"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["run_id", "event_id"], ["grouping_runs.id", "grouping_runs.event_id"]
+        ),
+        UniqueConstraint("event_id", "number", name="final_team_number"),
+        UniqueConstraint("id", "event_id", name="final_team_id_event"),
+        CheckConstraint("number > 0 AND target_size > 0 AND version > 0", name="final_team_limits"),
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    run_id: Mapped[UUID]
+    number: Mapped[int]
+    target_size: Mapped[int]
+    version: Mapped[int] = mapped_column(default=1)
+
+
+class Assignment(Base):
+    __tablename__ = "assignments"
+    __table_args__ = (
+        ForeignKeyConstraint(["team_id", "event_id"], ["final_teams.id", "final_teams.event_id"]),
+        UniqueConstraint("event_id", "user_id", name="assignment_event_user"),
+        CheckConstraint(
+            "status IN ('PENDING', 'CONFIRMED', 'DECLINED', 'WITHDRAWN')", name="assignment_status"
+        ),
+        Index("ix_assignments_team_status", "team_id", "status"),
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    team_id: Mapped[UUID]
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    status: Mapped[str] = mapped_column(String(20), default="PENDING")
+    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class RosterAction(Base):
+    __tablename__ = "roster_actions"
+    __table_args__ = (UniqueConstraint("event_id", "request_id", name="roster_request"),)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    request_id: Mapped[UUID]
+    payload_hash: Mapped[str] = mapped_column(String(64))

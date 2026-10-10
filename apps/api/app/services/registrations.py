@@ -67,8 +67,8 @@ def state(db: Session, event: Event, registration: Registration | None) -> Regis
         capacity=event.capacity,
         registration_open=event.status == "PUBLISHED"
         and event.registration_opens_at <= now < event.registration_closes_at,
-        withdrawal_open=event.status in {"PUBLISHED", "GROUPS_PROPOSED"}
-        and now < event.grouping_at,
+        withdrawal_open=event.status in {"PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"}
+        and now < event.start_at,
         event_status=event.status,
     )
 
@@ -109,14 +109,22 @@ def join(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
 
 def withdraw(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
     event = lock_event(db, event_id)
+    if event.status == "GROUPS_FINALIZED":
+        from app.models import User
+        from app.services import teams
+
+        user = db.get(User, user_id)
+        assert user is not None
+        teams.withdraw(db, event_id, user)
+        return state(db, event, find_registration(db, event, user_id))
     registration = find_registration(db, event, user_id)
     if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} and registration is None:
         raise HTTPException(404, "Event not found")
     if registration is None or registration.status == "CANCELLED":
         return state(db, event, registration)
-    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} or utcnow() >= event.grouping_at:
+    if event.status not in {"PUBLISHED", "GROUPS_PROPOSED"} or utcnow() >= event.start_at:
         raise HTTPException(
-            409, "Self-service withdrawal is available only before grouping on an active event"
+            409, "Self-service withdrawal is available only before event start on an active event"
         )
     had_seat = registration.status == "REGISTERED"
     registration.status = "CANCELLED"

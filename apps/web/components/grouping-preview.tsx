@@ -6,6 +6,7 @@ import { ApiError, EventData, apiRequest } from "../lib/api";
 type Preview = {
   id: string;
   seed: number;
+  status: string;
   score: number;
   fairness: number;
   baseline_score: number;
@@ -110,6 +111,31 @@ export function GroupingPreview({
       setBusy(false);
     }
   }
+  async function finalize() {
+    if (!preview) return;
+    setBusy(true);
+    setError("");
+    try {
+      await apiRequest(
+        `/events/${event.id}/grouping-runs/${preview.id}/finalize`,
+        {
+          method: "POST",
+          body: JSON.stringify({ version: event.version }),
+        },
+        csrfToken,
+      );
+      await refresh();
+      await onGenerated();
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Could not finalize teams.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
   const active = ["PUBLISHED", "GROUPS_PROPOSED"].includes(event.status);
   return (
     <section className="panel mt-6" aria-label="Grouping preview">
@@ -160,6 +186,15 @@ export function GroupingPreview({
         </p>
       ) : preview ? (
         <>
+          {active && !preview.stale && preview.status === "PROPOSED" && (
+            <button
+              className="button mt-4"
+              disabled={busy}
+              onClick={() => void finalize()}
+            >
+              Finalize these teams
+            </button>
+          )}
           {preview.stale && (
             <p role="alert" className="mt-4 text-red-800">
               Stale preview: {preview.stale_reason}
@@ -173,7 +208,10 @@ export function GroupingPreview({
           <p className="mt-3 text-sm">
             Lower scores are better. Fairness breaks equal repeat scores. The
             search keeps the best valid result found; it does not guarantee the
-            global optimum. These teams are proposals awaiting organizer review.
+            global optimum.{" "}
+            {preview.status === "FINALIZED"
+              ? "This is the original approved preview; see the final roster for current assignments."
+              : "These teams are proposals awaiting organizer review."}
           </p>
           <ol className="mt-4 grid gap-4 sm:grid-cols-2">
             {preview.teams.map((team) => (
