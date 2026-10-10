@@ -23,3 +23,87 @@ button:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 4px;
 }
+
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.page-shell {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+.page-shell h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+.page-shell h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+.intro {
+  margin: 1.25rem 0 2rem;
+  color: #57534e;
+  font-size: 1.125rem;
+}
+.panel {
+  background: white;
+  border: 1px solid #d6d3d1;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+.form-stack {
+  display: grid;
+  gap: 1.25rem;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+input,
+textarea,
+select {
+  min-width: 0;
+  border: 1px solid #a8a29e;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.65rem 0.75rem;
+  color: #172c26;
+  font: inherit;
+  font-weight: 400;
+}
+textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.button {
+  display: inline-block;
+  border-radius: 0.5rem;
+  background: #064e3b;
+  color: white;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #57534e;
+}
+dd {
+  margin-top: 0.35rem;
+}

@@ -1,5 +1,10 @@
 # Development foundation
 
+This document records the original Phase 0 slice. Phase 1 adds
+[accounts](authentication.md), [events](event-management.md), and a
+[database schema](../concepts/database-and-migrations.md). See the README for
+current setup commands and verification.
+
 ## Purpose and user experience
 
 Phase 0 proves that the browser and API can communicate before we add accounts or
@@ -47,7 +52,7 @@ origins. Authentication will require its own authorization and cookie/CSRF polic
   tooling through uv. Both dependency trees have lockfiles for repeatable installs.
 - CI runs separate lint and build steps because Next.js builds do not run ESLint.
 
-There is no scheduler, worker, authentication, or grouping logic in this slice.
+Phase 0 introduced no scheduler, worker, authentication, or grouping logic.
 We use the existing repository root for `apps/`, matching the technical layout
 without nesting another repository directory.
 

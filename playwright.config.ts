@@ -1,5 +1,12 @@
 import { defineConfig } from "@playwright/test";
 
+const databaseUrl = process.env.RAPO_DATABASE_URL;
+if (!databaseUrl || !new URL(databaseUrl).pathname.endsWith("_test")) {
+  throw new Error(
+    "Browser tests require RAPO_DATABASE_URL pointing to a dedicated database ending in _test.",
+  );
+}
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,

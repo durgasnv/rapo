@@ -10,6 +10,9 @@ permissions:
 jobs:
   checks:
     runs-on: ubuntu-latest
+    env:
+      RAPO_DATABASE_URL: postgresql+psycopg://rapo:change-me-local-only@127.0.0.1:5432/rapo_test
+      RAPO_TEST_DATABASE_URL: postgresql+psycopg://rapo:change-me-local-only@127.0.0.1:5432/rapo_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,6 +25,10 @@ jobs:
           python-version: "3.12"
       - run: npm ci
       - run: uv sync --locked
+      - run: docker compose --env-file .env.example up -d --wait db
+      - run: docker compose --env-file .env.example exec -T db psql -U rapo -d rapo -c 'CREATE DATABASE rapo_test;'
+      - run: uv run alembic upgrade head
+      - run: uv run alembic check
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
@@ -33,7 +40,6 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: "1"
       - run: docker compose --env-file .env.example config --quiet
-      - run: docker compose --env-file .env.example up -d --wait db
       - run: docker compose --env-file .env.example exec -T db psql -U rapo -d rapo -c 'SELECT 1;'
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

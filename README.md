@@ -3,9 +3,9 @@
 **Less repetition. More connection.**
 
 rapo. is a web platform for event registration and fair, history-aware team
-formation. The current implementation is the Phase 0 foundation: a Next.js page
-that calls a FastAPI health endpoint, local PostgreSQL configuration, and CI.
-Accounts, events, and team formation are planned and are not implemented yet.
+formation. The current implementation includes accounts, secure sessions,
+organizer-owned event drafts, publication/cancellation, and public discovery.
+Participant registration, waitlists, and team formation are the next phases.
 
 ## Prerequisites
 
@@ -23,6 +23,7 @@ npm ci
 uv sync --locked
 cp .env.example .env
 cp apps/web/.env.example apps/web/.env.local
+cp apps/api/.env.example apps/api/.env
 ```
 
 Set a local database password in `.env`, then start PostgreSQL:
@@ -31,10 +32,13 @@ Set a local database password in `.env`, then start PostgreSQL:
 docker compose up -d --wait db
 ```
 
-Start the API in one terminal:
+Update `RAPO_DATABASE_URL` in `apps/api/.env` to match the database credentials
+and host port in the root `.env`. URL-encode special characters in its password.
+Apply the schema, then start the API in one terminal:
 
 ```bash
-uv run uvicorn app.main:app --app-dir apps/api --reload --host 127.0.0.1 --port 8000
+uv run --env-file apps/api/.env alembic upgrade head
+uv run --env-file apps/api/.env uvicorn app.main:app --app-dir apps/api --reload --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
 Start the frontend in another:
@@ -43,9 +47,21 @@ Start the frontend in another:
 npm run dev
 ```
 
-Open <http://localhost:3000>. The service status should show “Connected to rapo.”
-and `{ "status": "ok" }`. API documentation is at <http://localhost:8000/docs>.
+Open <http://localhost:3000>, create an account, and explore events. The expandable
+service status shows “Connected to rapo.” and `{ "status": "ok" }`.
+API documentation is at <http://localhost:8000/docs>.
 The health endpoint reports API liveness only; it does not query PostgreSQL.
+
+To try the organizer flow, first create an account, then grant access from the
+trusted server terminal:
+
+```bash
+PYTHONPATH=apps/api uv run --env-file apps/api/.env python -m app.cli your-email@example.com
+```
+
+Refresh the browser and choose **Manage events**. Drafts stay private until
+published. The event form uses UTC schedule inputs and a separate display
+timezone. Organizer access cannot be selected during signup.
 
 ## Configuration
 
@@ -55,11 +71,19 @@ The health endpoint reports API liveness only; it does not query PostgreSQL.
 | `RAPO_CORS_ORIGINS`                                 | API process environment | JSON array of allowed frontend origins; defaults to localhost and 127.0.0.1 on port 3000 |
 | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Root `.env`             | Local PostgreSQL configuration                                                           |
 | `POSTGRES_PORT`                                     | Root `.env`             | Host port for PostgreSQL; defaults to 5432                                               |
+| `RAPO_DATABASE_URL`                                 | `apps/api/.env`         | SQLAlchemy PostgreSQL connection URL, used by API, migrations, and admin command         |
+| `RAPO_COOKIE_SECURE`                                | `apps/api/.env`         | `false` for local HTTP; set `true` for production HTTPS                                  |
+| `RAPO_SESSION_TTL_SECONDS`                          | API process environment | Session lifetime; defaults to 86400 seconds                                              |
+| `RAPO_AUTH_RATE_LIMIT`                              | API process environment | Shared authentication attempts per client IP/window; defaults to 20                      |
+| `RAPO_AUTH_RATE_WINDOW_SECONDS`                     | API process environment | Authentication window; defaults to 60 seconds                                            |
 
 Restart Next.js after changing its environment file. The API reads environment
 variables from its process; it does not load the root `.env` automatically.
 Database passwords belong only on the server and must never use a
 `NEXT_PUBLIC_` variable. PostgreSQL binds to the local loopback interface.
+Use the same hostname for the browser and API URL: pair `localhost` with
+`localhost`, or `127.0.0.1` with `127.0.0.1`, so same-site session cookies work.
+Production deployments need HTTPS, secure cookies, and reviewed proxy settings.
 
 ## Checks
 
@@ -73,12 +97,27 @@ uv run ruff format --check .
 uv run mypy
 uv run pytest
 npx playwright install --with-deps chromium
-npm run test:e2e
 ```
 
+Without a test URL, PostgreSQL integration tests are skipped. To run all API and
+browser tests, create a dedicated test database and use its URL (adjust credentials
+and port to match your local setup):
+
+```bash
+docker compose exec -T db psql -U rapo -d rapo -c 'CREATE DATABASE rapo_test;'
+RAPO_TEST_DATABASE_URL=postgresql+psycopg://rapo:change-me-local-only@localhost:5432/rapo_test uv run pytest
+RAPO_DATABASE_URL=postgresql+psycopg://rapo:change-me-local-only@localhost:5432/rapo_test uv run alembic upgrade head
+RAPO_DATABASE_URL=postgresql+psycopg://rapo:change-me-local-only@localhost:5432/rapo_test npm run test:e2e
+```
+
+Create the test database once. Integration tests use a fresh temporary schema per
+suite and roll back individual tests. Browser tests create unique accounts/events
+in the test database; they must never point to a production database.
+
 The browser tests start their own API and frontend on ports 8000 and 3000. Stop
-existing development servers first. They verify a live API request and recovery
-from a failed request. CI also starts PostgreSQL and executes `SELECT 1`.
+existing development servers first. They verify health/retry, signup/login/logout,
+session persistence, and organizer draft/edit/publish/cancel flows. CI starts
+PostgreSQL, migrates its test database, and runs these checks.
 
 Use `npm run format` for web/config/document formatting and `uv run ruff format .`
 for Python. Stop PostgreSQL with `docker compose down`; its named volume preserves
@@ -93,8 +132,11 @@ credentials. Do not remove the volume unless you intend to delete its data.
 - `.github/workflows/ci.yml`: formatting, lint, types, tests, build, database check.
 - [Development foundation](docs/features/development-foundation.md): request flow,
   design decisions, troubleshooting, and limitations.
+- [Database and migrations](docs/concepts/database-and-migrations.md),
+  [authentication](docs/features/authentication.md), and
+  [event management](docs/features/event-management.md): Phase 1 behavior.
 - [Requirements](docs/1000_requirement.md), [technical plan](docs/1100_plan.md), and
   [development phases](docs/1200_phases.md): the product roadmap.
 
-Phase 1 will introduce schema migrations, authentication, organizer ownership,
-and event management. No deployment is configured yet.
+Phase 2 adds registration, fixed/unlimited capacity, and FIFO waitlists.
+Password reset remains an MVP requirement. No deployment is configured yet.

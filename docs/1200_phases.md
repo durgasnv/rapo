@@ -25,15 +25,31 @@ the requirements remain open and must be resolved before the affected features.
 
 **Goal:** Real users can create and discover events.
 
-- [ ] Design SQLAlchemy models and first Alembic migration.
-- [ ] Register/login/logout and session security.
-- [ ] Organizer ownership and role checks.
-- [ ] Create/edit/publish event APIs with timezone and date validation.
-- [ ] Build landing page, event list, event detail, organizer create/edit form.
-- [ ] Add backend authorization and validation tests.
+- [x] Design SQLAlchemy models and first Alembic migration.
+- [x] Register/login/logout and session security.
+- [x] Organizer ownership and role checks.
+- [x] Create/edit/publish event APIs with timezone and date validation.
+- [x] Build landing page, event list, event detail, organizer create/edit form.
+- [x] Add backend authorization and validation tests.
 
 **Deliverable:** Organizer publishes an event; participant can browse it.
 **Exit test:** Non-owner cannot edit another organizer's event.
+
+**Implementation status:** Phase 1 flow implemented and exercised against
+PostgreSQL and a live browser. Organizer access is granted through a trusted
+server command. Published events are read-only in this slice; schedule inputs use
+UTC and public details use the configured timezone. Password reset remains an MVP
+requirement before release. Hosted CI/deployment has not been run in this session.
+
+**Recovery checkpoint (2026-10-10):** Restored locked Python dependencies and
+verified with the installed Node.js 24 runtime. All 26 API tests passed against an
+isolated PostgreSQL 16 test database. Python lint, formatting, and type checks,
+frontend formatting/lint/type checks, and Alembic schema comparison passed.
+The production frontend build and all four live-browser tests also passed from a
+fresh Linux checkout using the locked npm dependencies and matching Chromium.
+Docker Desktop WSL integration is unavailable in this environment; verification
+used a temporary PostgreSQL cluster rather than the existing application data.
+Phase 2 is the next implementation milestone.
 
 ## Phase 2 — Registration and waitlist (Week 3)
 

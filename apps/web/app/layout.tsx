@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AccountProvider } from "../components/account-provider";
 
 export const metadata: Metadata = {
   title: "rapo. — Less repetition. More connection.",
@@ -11,7 +12,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AccountProvider>{children}</AccountProvider>
+      </body>
     </html>
   );
 }
