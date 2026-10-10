@@ -87,6 +87,47 @@ export type EventPage = {
   limit: number;
 };
 
+export type Registration = {
+  id: string;
+  event_id: string;
+  status: "REGISTERED" | "WAITLISTED" | "CANCELLED";
+  registered_at: string;
+  waitlist_position: number | null;
+};
+
+export type RegistrationState = {
+  registration: Registration | null;
+  registered_count: number;
+  waitlisted_count: number;
+  capacity: number | null;
+  registration_open: boolean;
+  withdrawal_open: boolean;
+  event_status: EventData["status"];
+};
+
+export type RegistrationPage<T> = {
+  items: T[];
+  total: number;
+  offset: number;
+  limit: number;
+};
+
+export type MyRegistration = Registration & { event: EventData };
+export type RosterRegistration = Registration & {
+  user_id: string;
+  name: string;
+};
+export type RosterPage = RegistrationPage<RosterRegistration> & {
+  registered_count: number;
+  waitlisted_count: number;
+};
+
+export function registrationLabel(registration: Registration): string {
+  if (registration.status === "WAITLISTED")
+    return `Waitlisted · position ${registration.waitlist_position}`;
+  return registration.status === "REGISTERED" ? "Registered" : "Withdrawn";
+}
+
 export function formatDate(value: string, timezone: string): string {
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAccount } from "../../components/account-provider";
+import { ParticipantRegistrations } from "../../components/participant-registrations";
 
 export default function Dashboard() {
   const { account, loading } = useAccount();
@@ -25,8 +26,7 @@ export default function Dashboard() {
           <section className="panel">
             <h2>Make a new connection.</h2>
             <p className="my-4">
-              Discover what your community is planning. Participant registration
-              is coming next.
+              Discover what your community is planning and find your next event.
             </p>
             <Link className="button" href="/events">
               Explore events
@@ -37,6 +37,7 @@ export default function Dashboard() {
               </Link>
             )}
           </section>
+          <ParticipantRegistrations key={account.user.id} />
         </>
       )}
     </main>

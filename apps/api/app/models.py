@@ -1,10 +1,22 @@
 from datetime import UTC, datetime
+from typing import Literal
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, String, Text
+from sqlalchemy import (
+    BigInteger,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
+
+RegistrationStatus = Literal["REGISTERED", "WAITLISTED", "CANCELLED"]
 
 
 def utcnow() -> datetime:
@@ -77,6 +89,26 @@ class Event(Base):
     status: Mapped[str] = mapped_column(String(30), default="DRAFT")
     version: Mapped[int] = mapped_column(default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Registration(Base):
+    __tablename__ = "registrations"
+    __table_args__ = (
+        UniqueConstraint("event_id", "user_id", name="registration_event_user"),
+        UniqueConstraint("event_id", "queue_number", name="registration_queue_number"),
+        CheckConstraint(
+            "status IN ('REGISTERED', 'WAITLISTED', 'CANCELLED')", name="registration_status"
+        ),
+        CheckConstraint("queue_number > 0", name="registration_queue_positive"),
+        Index("ix_registrations_event_status_queue", "event_id", "status", "queue_number"),
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    status: Mapped[RegistrationStatus] = mapped_column(String(20))
+    queue_number: Mapped[int] = mapped_column(BigInteger)
+    registered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 class AuditLog(Base):

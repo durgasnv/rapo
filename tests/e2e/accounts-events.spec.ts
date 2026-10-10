@@ -91,13 +91,15 @@ test("organizer creates, edits, publishes and cancels a discoverable event", asy
     .getByLabel("Event title", { exact: true })
     .fill(`${title} updated`);
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Changes saved.");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Changes saved." }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Publish event", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText(
-    "Your event is published.",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your event is published." }),
+  ).toBeVisible();
   await page
     .getByRole("link", { name: "View public event", exact: true })
     .click();
@@ -109,14 +111,26 @@ test("organizer creates, edits, publishes and cancels a discoverable event", asy
   ).toBeVisible();
   expect((await anonymous.get(`/events/${eventId}`)).status()).toBe(200);
   await page.goto("/events");
-  await expect(
-    page.getByRole("heading", { name: `${title} updated`, exact: true }),
-  ).toBeVisible();
+  const pages = page.getByRole("navigation", { name: "Event pages" });
+  const publishedHeading = page.getByRole("heading", {
+    name: `${title} updated`,
+    exact: true,
+  });
+  await expect(pages).toBeVisible();
+  // Repeated runs retain events; discovery must work beyond the first results page.
+  while (
+    !(await publishedHeading.isVisible()) &&
+    (await pages.getByRole("button", { name: "Next", exact: true }).isEnabled())
+  ) {
+    await pages.getByRole("button", { name: "Next", exact: true }).click();
+    await expect(pages).toBeVisible();
+  }
+  await expect(publishedHeading).toBeVisible();
   await page.goto(`/organizer/events/${eventId}`);
   await page.getByRole("button", { name: "Cancel event", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Your event is cancelled.",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your event is cancelled." }),
+  ).toBeVisible();
   expect((await anonymous.get(`/events/${eventId}`)).status()).toBe(404);
   await anonymous.dispose();
 });

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
+import { EventRegistration } from "./event-registration";
 
 export function EventDetail({ id }: { id: string }) {
   const [event, setEvent] = useState<EventData | null>(null);
@@ -77,9 +78,7 @@ export function EventDetail({ id }: { id: string }) {
                 <dd>{event.capacity ?? "No fixed capacity"}</dd>
               </div>
             </dl>
-            <p className="mt-6 text-stone-600">
-              Participant registration will be available in the next release.
-            </p>
+            <EventRegistration event={event} />
           </section>
         </>
       )}

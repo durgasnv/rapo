@@ -3,8 +3,8 @@
 ## Purpose
 
 PostgreSQL now stores accounts, sessions, authentication rate counters, events,
-and event audit records. SQLAlchemy models describe the application view of these
-tables. Alembic migrations describe how to create or change the real schema.
+event registrations, and audit records. SQLAlchemy models describe the application
+view of these tables. Alembic migrations describe how to create or change the real schema.
 
 ## Setup and data flow
 
@@ -57,8 +57,11 @@ CI supplies the URL explicitly and runs the complete suite.
 
 ## Boundaries
 
-The schema contains only the Phase 1 domain. Registrations, teams, grouping runs,
-and history tables will arrive with the phases that use them. The status check
+The schema now contains the Phase 1 and Phase 2 domains. The Phase 2 migration
+adds registrations, unique user/event rows, unique event-local queue tickets,
+status checks, and lookup indexes. See [registration](../features/event-registration.md)
+and [transactions](transaction-and-concurrency.md) for the locking protocol.
+Teams, grouping runs, and history tables will arrive with the phases that use them. The event status check
 currently permits `DRAFT`, `PUBLISHED`, and `CANCELLED`; later lifecycle states
 will require a migration.
 

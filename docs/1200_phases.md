@@ -55,14 +55,26 @@ Phase 2 is the next implementation milestone.
 
 **Goal:** Participants can join events without race conditions.
 
-- [ ] Registration with uniqueness and eligibility checks.
-- [ ] Fixed capacity and unlimited capacity modes.
-- [ ] FIFO waitlist and cancellation/promotion.
-- [ ] Participant registration status dashboard.
-- [ ] Tests for concurrent registrations, duplicate requests, and promotion.
+- [x] Registration with uniqueness and eligibility checks.
+- [x] Fixed capacity and unlimited capacity modes.
+- [x] FIFO waitlist and cancellation/promotion.
+- [x] Participant registration status dashboard.
+- [x] Tests for concurrent registrations, duplicate requests, and promotion.
 
 **Deliverable:** Registration-to-waitlist flow works end-to-end.
 **Exit test:** Last available seat cannot be assigned twice under simultaneous requests.
+
+**Implementation status (2026-10-10):** Phase 2 implemented and verified with
+41 PostgreSQL-backed API tests (15 new registration tests, including five
+concurrency cases) and six live-browser tests. Migration/schema comparison,
+formatting, lint, both type checkers, and the production frontend build passed.
+Registration closes at its configured cutoff; self-service withdrawal and FIFO
+promotion stop at the scheduled grouping time. Rejoining takes a new queue ticket.
+Participant dashboards and private organizer rosters are paginated and refresh
+on request. Cancelled events remain visible in participants' own history.
+Verification used an isolated PostgreSQL 16 database and a Linux checkout with
+locked dependencies. Hosted CI/deployment remains unverified. Phase 3 is next;
+grouping, notifications, and post-grouping replacements are not implemented yet.
 
 ## Phase 3 — Grouping engine (Weeks 4–5)
 

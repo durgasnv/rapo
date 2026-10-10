@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
 import { EventForm } from "./event-form";
+import { OrganizerRoster } from "./organizer-roster";
 
 export function OrganizerEditor({ id }: { id?: string }) {
   const { account, loading } = useAccount();
@@ -151,6 +152,12 @@ export function OrganizerEditor({ id }: { id?: string }) {
                     }}
                   />
                 </div>
+              )}
+              {event && (
+                <OrganizerRoster
+                  key={`${event.id}:${event.version}`}
+                  eventId={event.id}
+                />
               )}
             </>
           )}

@@ -30,8 +30,9 @@ The API enforces:
   are currently implemented. Published fields are read-only in this slice.
 
 The saved draft displays its computed schedule before the organizer publishes it.
-No grouping job runs yet; this phase stores the configuration only. Later phases
-add registration, automated transitions, and team formation.
+No grouping job runs yet; this phase stores the configuration only. Phase 2 adds
+[registration and waitlists](event-registration.md). Later phases add automated
+transitions and team formation.
 
 ## Ownership, transactions, and stale forms
 
@@ -61,6 +62,10 @@ tests exercise the organizer flow and verify anonymous draft/public/cancelled
 visibility against the live API.
 
 The current audit records capture actor, event, action, and time; richer before/
-after snapshots and an audit UI remain future work. Registration, waitlists,
-notifications, finalized teams, and later event lifecycle states are not available
-yet. Cancellation preserves the event and audit history instead of deleting them.
+after snapshots and an audit UI remain future work. Notifications, finalized
+teams, and later event lifecycle states are not available
+yet. Registration and waitlists are implemented in Phase 2, with a private roster
+on the event management page. Cancellation preserves event, registration, and
+audit history; participant dashboards explicitly display the cancelled event.
+Registration changes increment the event version, so reload an outdated event
+management page before attempting cancellation.

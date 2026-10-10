@@ -11,7 +11,7 @@ from starlette.middleware.base import RequestResponseEndpoint
 
 from app.core.config import Settings
 from app.db import make_engine
-from app.routers import auth, events
+from app.routers import auth, events, registrations
 
 
 class HealthResponse(BaseModel):
@@ -34,7 +34,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @application.middleware("http")
     async def private_no_store(request: Request, call_next: RequestResponseEndpoint) -> Response:
         response = await call_next(request)
-        if request.url.path == "/me" or request.url.path.startswith(("/auth/", "/organizer/")):
+        if (
+            request.url.path == "/me"
+            or request.url.path.startswith(("/auth/", "/organizer/", "/me/"))
+            or request.url.path.endswith(("/registration", "/registrations", "/register"))
+        ):
             response.headers["Cache-Control"] = "no-store"
         return response
 
@@ -55,7 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         CORSMiddleware,
         allow_origins=config.cors_origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PATCH"],
+        allow_methods=["GET", "POST", "PATCH", "DELETE"],
         allow_headers=["Content-Type", "X-CSRF-Token"],
     )
 
@@ -65,6 +69,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     application.include_router(auth.router)
     application.include_router(events.router)
+    application.include_router(registrations.router)
     return application
 
 
