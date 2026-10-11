@@ -45,6 +45,11 @@ function RosterControls({
   const [data, setData] = useState<FinalRoster | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    teamId: string;
+    message: string;
+    error: boolean;
+  } | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const pending = useRef<{ key: string; body: Record<string, unknown> } | null>(
@@ -77,10 +82,12 @@ function RosterControls({
     path: string,
     values: Record<string, unknown> = {},
     ownerAction = false,
+    teamId?: string,
   ) {
     if (!data) return;
     setBusy(true);
     setError("");
+    setFeedback(null);
     let body = values;
     if (ownerAction) {
       body = { ...values, version: data.version };
@@ -93,23 +100,34 @@ function RosterControls({
       body = pending.current.body;
     }
     try {
-      setData(
-        await apiRequest<FinalRoster>(
-          `/events/${event.id}/teams${path}`,
-          {
-            method: "POST",
-            body: JSON.stringify(body),
-          },
-          account.csrf_token,
-        ),
+      const result = await apiRequest<FinalRoster>(
+        `/events/${event.id}/teams${path}`,
+        { method: "POST", body: JSON.stringify(body) },
+        account.csrf_token,
       );
+      setData(result);
+      if (teamId) {
+        const updated = result.teams.find((team) => team.id === teamId);
+        const pendingCount =
+          updated?.members.filter((m) => m.status === "PENDING").length ?? 0;
+        let message = path.endsWith("/continue")
+          ? `Current size approved: ${updated?.target_size} active ${updated?.target_size === 1 ? "member" : "members"}.`
+          : "Vacancy filled from the waitlist.";
+        if (updated?.status === "NEEDS_ATTENTION")
+          message += ` Still needs attention: ${updated.reasons.join(" ")}`;
+        else if (pendingCount)
+          message += ` Awaiting confirmation from ${pendingCount} ${pendingCount === 1 ? "member" : "members"}.`;
+        else message += " Team is ready.";
+        setFeedback({ teamId, message, error: false });
+      }
       pending.current = null;
       await onChanged?.();
     } catch (failure) {
       if (failure instanceof ApiError) pending.current = null;
-      setError(
-        failure instanceof Error ? failure.message : "Could not update teams.",
-      );
+      const message =
+        failure instanceof Error ? failure.message : "Could not update teams.";
+      if (teamId) setFeedback({ teamId, message, error: true });
+      else setError(message);
     } finally {
       setBusy(false);
     }
@@ -160,6 +178,7 @@ function RosterControls({
           disabled={busy || !loaded}
           onClick={() => {
             setError("");
+            setFeedback(null);
             setRefresh((v) => v + 1);
           }}
         >
@@ -206,6 +225,19 @@ function RosterControls({
               );
               const ownActive =
                 own && ["PENDING", "CONFIRMED"].includes(own.status);
+              const count = team.members.filter((m) =>
+                ["PENDING", "CONFIRMED"].includes(m.status),
+              ).length;
+              const validSize =
+                count >= event.min_team_size && count <= event.max_team_size;
+              const vacancy = count < team.target_size;
+              const approvalHelp = !validSize
+                ? count < event.min_team_size
+                  ? `Cannot approve: at least ${event.min_team_size} active members required. Fill the vacancy or reassign members.`
+                  : `Cannot approve: at most ${event.max_team_size} active members allowed. Reassign members.`
+                : !vacancy
+                  ? "Current size already approved. Member confirmations are separate."
+                  : "Approve continuing with this smaller team. Members must still confirm.";
               return (
                 <section
                   key={team.id}
@@ -215,6 +247,18 @@ function RosterControls({
                   <h3 className="font-semibold">
                     Team {team.number} · {team.status.replaceAll("_", " ")}
                   </h3>
+                  <p className="mt-2 text-sm">
+                    {count} active · Target {team.target_size} · Allowed{" "}
+                    {event.min_team_size}–{event.max_team_size}
+                  </p>
+                  {feedback?.teamId === team.id && (
+                    <p
+                      role={feedback.error ? "alert" : "status"}
+                      className={`mt-2 ${feedback.error ? "text-red-800" : "text-emerald-800"}`}
+                    >
+                      {feedback.message}
+                    </p>
+                  )}
                   {team.reasons.map((reason) => (
                     <p key={reason} className="mt-2 text-red-800">
                       {reason}
@@ -276,20 +320,27 @@ function RosterControls({
                         className="button"
                         disabled={busy || !data.confirmation_open}
                         onClick={() =>
-                          void change(`/${team.id}/replace`, {}, true)
+                          void change(`/${team.id}/replace`, {}, true, team.id)
                         }
                       >
                         Fill vacancy from waitlist
                       </button>
                       <button
                         className="underline"
-                        disabled={busy}
+                        disabled={busy || !validSize || !vacancy}
+                        aria-describedby={`approval-help-${team.id}`}
                         onClick={() =>
-                          void change(`/${team.id}/continue`, {}, true)
+                          void change(`/${team.id}/continue`, {}, true, team.id)
                         }
                       >
                         Approve current team size
                       </button>
+                      <p
+                        id={`approval-help-${team.id}`}
+                        className="w-full text-sm"
+                      >
+                        {approvalHelp}
+                      </p>
                     </div>
                   )}
                 </section>

@@ -567,3 +567,49 @@ def test_concurrent_replacement_claims_waitlisted_user_once(
             connection.execute(delete(TeamMember).where(TeamMember.run_id.in_(runs)))
             connection.execute(delete(Team).where(Team.run_id.in_(runs)))
             connection.execute(delete(GroupingRun).where(GroupingRun.event_id == event_id))
+
+
+def test_attention_reasons_include_counts_and_limits(client, db, finalized):
+    event, users, _, _ = finalized
+    as_user(client, db, users[0])
+    original = get_roster(client, event)["teams"][0]
+    assert client.post(f"/events/{event.id}/teams/withdraw").status_code == 200
+    owner(client, db, event)
+    affected = next(t for t in get_roster(client, event)["teams"] if t["id"] == original["id"])
+    assert affected["reasons"] == [
+        "Below minimum: 1 active; at least 2 required.",
+        "Vacancy: 1 unfilled place (1 of 2 expected).",
+    ]
+    assert owner_action(client, event, f"{affected['id']}/continue").status_code == 409
+    # A trusted fixture exercises the above-maximum reason without bypassing an API rule.
+    db.refresh(event)
+    event.min_team_size = event.max_team_size = 1
+    db.commit()
+    other = next(t for t in get_roster(client, event)["teams"] if t["id"] != affected["id"])
+    assert other["reasons"] == ["Above maximum: 2 active; at most 1 allowed."]
+    assert owner_action(client, event, f"{other['id']}/continue").status_code == 409
+
+
+@pytest.mark.parametrize("overdue", [False, True])
+def test_valid_size_approval_preserves_pending_confirmations(client, db, finalized, overdue):
+    event, users, _, _ = finalized
+    as_user(client, db, users[0])
+    team = get_roster(client, event)["teams"][0]
+    assert client.post(f"/events/{event.id}/teams/withdraw").status_code == 200
+    db.refresh(event)
+    event.min_team_size = 1
+    db.commit()
+    owner(client, db, event)
+    now = event.confirmation_deadline + timedelta(seconds=1 if overdue else -1)
+    with patch("app.services.teams.utcnow", return_value=now):
+        response = owner_action(client, event, f"{team['id']}/continue")
+    assert response.status_code == 200, response.text
+    approved = next(t for t in response.json()["teams"] if t["id"] == team["id"])
+    assert approved["target_size"] == 1
+    assert [
+        m["status"] for m in approved["members"] if m["status"] in {"PENDING", "CONFIRMED"}
+    ] == ["PENDING"]
+    assert approved["status"] == ("NEEDS_ATTENTION" if overdue else "AWAITING_CONFIRMATIONS")
+    assert approved["reasons"] == (
+        ["Confirmation overdue: 1 still awaiting confirmation."] if overdue else []
+    )

@@ -129,6 +129,7 @@ with Session(make_engine(url)) as db:
     await alice
       .getByRole("link", { name: "View your team and confirm", exact: true })
       .click();
+    await alice.waitForURL(`**/events/${event.id}`, { timeout: 60_000 });
     const own = alice.getByRole("region", { name: "Your team", exact: true });
     await expect(own.getByRole("heading", { name: /^Team \d/ })).toHaveCount(1);
     await own
@@ -150,18 +151,34 @@ with Session(make_engine(url)) as db:
       has: organizer.getByRole("heading", { name: /NEEDS ATTENTION/ }),
     });
     await expect(attention).toHaveCount(1);
-    await attention
-      .getByRole("button", { name: "Approve current team size", exact: true })
-      .click();
-    await expect(roster.getByRole("alert")).toContainText(
-      "outside the size limits",
-    );
+    await expect(
+      attention.getByText("Below minimum: 1 active; at least 2 required.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      attention.getByText("Vacancy: 1 unfilled place (1 of 2 expected).", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      attention.getByRole("button", {
+        name: "Approve current team size",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await expect(
+      attention.getByText(/Cannot approve: at least 2 active members required/),
+    ).toBeVisible();
     await attention
       .getByRole("button", { name: "Fill vacancy from waitlist", exact: true })
       .click();
     await expect(
       roster.getByText("Team Waiting · pending", { exact: true }),
     ).toBeVisible();
+    await expect(roster.getByRole("status")).toContainText(
+      "Vacancy filled from the waitlist.",
+    );
     const waitingContext = await browser.newContext({
       storageState: await people[4].client.storageState(),
     });
@@ -260,9 +277,61 @@ with Session(make_engine(url)) as db:
     await vacant
       .getByRole("button", { name: "Fill vacancy from waitlist", exact: true })
       .click();
-    await expect(roster.getByRole("alert")).toContainText(
+    await expect(vacant.getByRole("alert")).toContainText(
       "No eligible waitlisted participant",
     );
+    // A trusted test-only configuration permits continuation with one remaining member.
+    execFileSync(
+      "uv",
+      [
+        "run",
+        "python",
+        "-c",
+        `
+import os, sys
+from uuid import UUID
+from sqlalchemy.orm import Session
+from sqlalchemy.engine import make_url
+from app.db import make_engine
+from app.models import Event
+url = os.environ['RAPO_DATABASE_URL']
+assert (make_url(url).database or '').endswith('_test')
+with Session(make_engine(url)) as db:
+    event = db.get(Event, UUID(sys.argv[1]))
+    event.min_team_size = 1
+    db.commit()
+`,
+        event.id,
+      ],
+      { env: { ...process.env, PYTHONPATH: "apps/api" } },
+    );
+    await organizer.reload();
+    const approvalCardName = await vacant.getAttribute("aria-label");
+    const approvalCard = roster.getByRole("region", {
+      name: approvalCardName!,
+      exact: true,
+    });
+    await approvalCard
+      .getByRole("button", { name: "Approve current team size", exact: true })
+      .click();
+    await expect(approvalCard.getByRole("status")).toHaveText(
+      "Current size approved: 1 active member. Awaiting confirmation from 1 member.",
+    );
+    await expect(approvalCard.getByRole("heading")).toContainText(
+      "AWAITING CONFIRMATIONS",
+    );
+    await expect(
+      approvalCard.getByRole("button", {
+        name: "Approve current team size",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await expect(
+      approvalCard.getByText(
+        "Current size already approved. Member confirmations are separate.",
+        { exact: true },
+      ),
+    ).toBeVisible();
   } finally {
     for (const context of contexts) await context.close();
     for (const client of clients) await client.dispose();

@@ -88,13 +88,22 @@ def roster(db: Session, event: Event, user: User) -> RosterOut:
     for team in teams:
         active = [m for m in names[team.id] if m.status in ACTIVE]
         reasons = []
-        if not event.min_team_size <= len(active) <= event.max_team_size:
-            reasons.append("Active team size is outside the event limits.")
-        if len(active) < team.target_size:
-            reasons.append("A vacancy needs replacement or organizer approval to continue.")
-        pending = any(m.status == "PENDING" for m in active)
+        count = len(active)
+        if count < event.min_team_size:
+            reasons.append(
+                f"Below minimum: {count} active; at least {event.min_team_size} required."
+            )
+        elif count > event.max_team_size:
+            reasons.append(f"Above maximum: {count} active; at most {event.max_team_size} allowed.")
+        if count < team.target_size:
+            vacancies = team.target_size - count
+            places = "place" if vacancies == 1 else "places"
+            reasons.append(
+                f"Vacancy: {vacancies} unfilled {places} ({count} of {team.target_size} expected)."
+            )
+        pending = sum(m.status == "PENDING" for m in active)
         if pending and now >= event.confirmation_deadline:
-            reasons.append("Confirmation deadline passed with unconfirmed members.")
+            reasons.append(f"Confirmation overdue: {pending} still awaiting confirmation.")
         result.append(
             FinalTeamOut(
                 id=team.id,

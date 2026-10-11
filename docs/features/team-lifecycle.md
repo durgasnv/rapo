@@ -101,6 +101,21 @@ the event's hard size limits. It does not waive overdue confirmations. Empty or
 undersized teams remain blocked; the organizer must repair them, extend the
 deadline when necessary, or cancel the event.
 
+Each team card shows its active count, target size, and allowed size range.
+Attention reasons include a keyword and current counts: **Below minimum**,
+**Above maximum**, **Vacancy**, or **Confirmation overdue**. Approval is disabled
+when the count is outside the allowed range or there is no outstanding vacancy;
+nearby text explains the restriction. The API continues enforcing size limits
+independently of the browser.
+
+Approval and replacement show success or failure on the affected card. A valid
+continuation removes the vacancy by accepting the current count, but pending
+members remain pending. The success message reports remaining confirmations or
+other attention reasons rather than implying the team is ready. Refreshing the
+roster clears old action feedback and reloads the authoritative state. These
+changes use the existing roster API and reason strings, without a migration or
+new approval policy.
+
 Moves/swaps use active members from the same event and validate both resulting
 team sizes before changing anything. A valid move/swap explicitly approves those
 new sizes and resets confirmations in both teams. Reassignment after the deadline
