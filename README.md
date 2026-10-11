@@ -82,6 +82,22 @@ or decline. The final roster provides vacancy repair, deadline extensions,
 validated reassignment, and CSV export.
 See [grouping previews](docs/features/grouping-preview.md) for the full flow and limits.
 
+## Try a 120-member demo
+
+Create synthetic members and events under your existing organizer account:
+
+```bash
+PYTHONPATH=apps/api uv run --env-file apps/api/.env python -m app.seed_demo \
+  --organizer your-email@example.com
+```
+
+Enter a demo password, then open **Manage events**. The demo includes 100 registered
+members, 20 waitlisted members, three completed events with repeated teammates,
+and a separate finalized roster with confirmations and vacancies. Re-running
+preserves your changes; add `--namespace practice-2` for a fresh demo.
+See [demo data and concurrent registration testing](docs/features/demo-data.md)
+for participant sign-ins, worker behavior, and the 120-request concurrency check.
+
 ## Configuration
 
 | Variable                                            | Where                   | Purpose                                                                                  |
