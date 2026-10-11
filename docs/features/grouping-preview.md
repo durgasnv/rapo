@@ -4,7 +4,7 @@ Phase 3 lets an event owner generate, reload, and review proposed teams after
 registration closes and before the event starts. Proposals do not finalize
 assignments or notify participants automatically. Phase 4 adds explicit
 [finalization, confirmations, and replacements](team-lifecycle.md); scheduled
-processing remains Phase 5.
+processing is available through the [Phase 5 worker](scheduled-grouping-and-notifications.md).
 
 ## Try it
 

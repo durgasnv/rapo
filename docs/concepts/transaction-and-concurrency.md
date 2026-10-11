@@ -84,3 +84,11 @@ Tests issue simultaneous same-run/different-run finalizations and same-ID/differ
 vacancy replacements through separate HTTP sessions. Successful retries reuse the
 committed result; competing intents receive 409 and must refresh. The original
 proposal memberships remain unchanged by these operations.
+
+The scheduled worker claims the same event row with `FOR UPDATE SKIP LOCKED`,
+processes each event in a separate transaction, and saves its job result with the
+proposal. A savepoint lets known processing failures roll back partial proposals
+while preserving a safe retry result. Process crashes roll back the whole event
+transaction. Private inbox notices share their producing transaction and use a
+recipient/key uniqueness constraint, so retrying cannot duplicate delivery. See
+[automation and notifications](../features/scheduled-grouping-and-notifications.md).

@@ -36,6 +36,7 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy
       - run: uv run pytest
+      - run: PYTHONPATH=apps/api uv run python -m app.jobs.grouping --once
       - run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"

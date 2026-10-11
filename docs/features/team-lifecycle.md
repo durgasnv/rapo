@@ -3,8 +3,9 @@
 Phase 4 turns an organizer-approved preview into real assignments. It adds
 participant confirmations/declines, withdrawals until event start, FIFO vacancy
 replacement, validated moves/swaps, explicit continuation approval, deadline
-extension, and an owner-only CSV export. Notifications and scheduled processing
-remain Phase 5; no background task removes people who miss a deadline.
+extension, and an owner-only CSV export. The [Phase 5 automation slice](scheduled-grouping-and-notifications.md)
+adds notifications and scheduled previews; no background task removes people who
+miss a deadline.
 
 ## Try the flow
 

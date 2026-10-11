@@ -145,8 +145,8 @@ See [team-lifecycle.md](features/team-lifecycle.md) for behavior and recovery.
 
 **Goal:** A stable, publicly usable demo.
 
-- [ ] Implement scheduled due-event processing with DB-backed locking/idempotency.
-- [ ] In-app notifications for key status changes.
+- [x] Implement scheduled due-event processing with DB-backed locking/idempotency.
+- [x] In-app notifications for key status changes.
 - [ ] Deploy PostgreSQL, API, worker, and frontend.
 - [ ] Configure production environment variables, HTTPS, CORS, health checks.
 - [ ] Run migrations and seed safe demo data.
@@ -154,6 +154,16 @@ See [team-lifecycle.md](features/team-lifecycle.md) for behavior and recovery.
 
 **Deliverable:** Live URL with persistent data and working grouping job.
 **Exit test:** Scheduled grouping creates one proposal even if the worker retries.
+
+**Automation implementation (2026-10-11):** Added a separate retry-safe worker,
+persistent per-event job outcomes, owner-visible scheduling status, and private
+in-app notifications with pagination, unread filtering, and read-state persistence.
+The worker creates proposals only; organizer approval remains required. Infeasible
+inputs are reported, failures back off, and notifications commit with their
+associated changes. See [automation and notifications](features/scheduled-grouping-and-notifications.md).
+Verification passed: 112 backend tests, nine live-browser tests, worker CLI smoke,
+migration/schema comparison, formatting, lint, types, and production build.
+Hosting, HTTPS, backups, demo seeding, and deployment verification remain open.
 
 ## Phase 6 — Polish, measurement, portfolio packaging (Week 8)
 

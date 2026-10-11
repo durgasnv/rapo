@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAccount } from "../../components/account-provider";
+import { Notifications } from "../../components/notifications";
 import { ParticipantRegistrations } from "../../components/participant-registrations";
 
 export default function Dashboard() {
@@ -37,6 +38,7 @@ export default function Dashboard() {
               </Link>
             )}
           </section>
+          <Notifications key={`notifications:${account.user.id}`} />
           <ParticipantRegistrations key={account.user.id} />
         </>
       )}

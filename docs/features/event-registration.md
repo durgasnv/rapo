@@ -15,7 +15,7 @@ names, statuses, and join times. Participant emails are not included in it, and
 participants cannot see the roster or someone else's registration.
 
 Use **Refresh registration**, **Refresh registrations**, or **Refresh roster** to
-see changes made by others. Promotions do not yet send notifications or push live
+see changes made by others. Promotions create private in-app notifications; screens do not push live
 updates. Buttons reflect the last server response; the server rechecks deadlines
 and capacity when an action arrives.
 
@@ -41,8 +41,9 @@ and capacity when an action arrives.
 
 Phase 4 extends the original Phase 2 cutoff to event start and adds explicit
 repair for finalized teams. See [team lifecycle](team-lifecycle.md) for confirmation,
-withdrawal, replacement, and reconfirmation rules. There is no grouping worker yet;
-timestamps enforce registration windows without a scheduler changing status.
+withdrawal, replacement, and reconfirmation rules. Phase 5 adds a separate
+[scheduled grouping worker and notifications](scheduled-grouping-and-notifications.md).
+Timestamps still enforce registration windows without a scheduler changing status.
 
 ## API and request flow
 
@@ -92,7 +93,8 @@ snapshot; its separate pagination total may change during concurrent activity.
 Effective joins and withdrawals increment the existing event version. An organizer
 whose event changed underneath an open form must reload before cancelling it.
 Join/withdraw audit records capture actor, event, action, and time; detailed
-before/after snapshots and a promotion notification remain future work.
+before/after registration snapshots remain future work. Promotions now write a
+private notification in the same transaction.
 
 The capacity invariant is enforced by the service's event-lock protocol, not by a
 cross-row database check. Any future worker or administrative registration writer

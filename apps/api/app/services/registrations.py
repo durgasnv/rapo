@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models import AuditLog, Event, Registration, RegistrationStatus, utcnow
 from app.schemas.registrations import RegistrationOut, RegistrationState
+from app.services.notifications import send
 
 
 def lock_event(db: Session, event_id: UUID, *, shared: bool = False) -> Event:
@@ -137,6 +138,14 @@ def withdraw(db: Session, event_id: UUID, user_id: UUID) -> RegistrationState:
         )
         if oldest is not None:
             oldest.status = "REGISTERED"
+            send(
+                db,
+                event,
+                oldest.user_id,
+                "WAITLIST_PROMOTED",
+                "You now have a registered place.",
+                f"promotion:{event.id}:{oldest.id}:{oldest.queue_number}",
+            )
     event.version += 1
     db.add(AuditLog(actor_id=user_id, event_id=event.id, action="registration.cancelled"))
     # Withdrawal and replacement commit together through the request's DB dependency.

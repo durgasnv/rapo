@@ -28,7 +28,14 @@ def published_event(client: TestClient, db: Session, capacity: int | None = 1) -
     make_organizer(client, db)
     response = client.post(
         "/events",
-        json=event_body() | {"capacity": capacity, "min_team_size": 1, "max_team_size": 2},
+        json=event_body()
+        | {
+            "capacity": capacity,
+            "min_team_size": 1,
+            "max_team_size": 2,
+            # These tests need an open window; exact boundaries have their own tests.
+            "registration_opens_at": (utcnow() - timedelta(days=1)).isoformat(),
+        },
     )
     assert response.status_code == 201, response.text
     event_id = UUID(response.json()["id"])
@@ -366,6 +373,9 @@ def race_setup(database_engine: Engine) -> Iterator[tuple[FastAPI, UUID, list[st
         yield application, event_id, tokens
     finally:
         with database_engine.begin() as connection:
+            from app.models import Notification
+
+            connection.execute(delete(Notification).where(Notification.event_id == event_id))
             connection.execute(delete(AuditLog).where(AuditLog.event_id == event_id))
             connection.execute(delete(Registration).where(Registration.event_id == event_id))
             connection.execute(delete(Event).where(Event.id == event_id))

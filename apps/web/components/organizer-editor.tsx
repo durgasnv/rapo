@@ -7,6 +7,7 @@ import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
 import { EventForm } from "./event-form";
 import { TeamRoster } from "./team-roster";
+import { GroupingSchedule } from "./grouping-schedule";
 import { GroupingPreview } from "./grouping-preview";
 import { OrganizerRoster } from "./organizer-roster";
 
@@ -159,6 +160,7 @@ export function OrganizerEditor({ id }: { id?: string }) {
                   />
                 </div>
               )}
+              {event && <GroupingSchedule event={event} />}
               {event && (
                 <GroupingPreview
                   key={`${event.id}:${account.user.id}`}

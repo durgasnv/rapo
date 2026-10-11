@@ -171,5 +171,20 @@ credentials. Do not remove the volume unless you intend to delete its data.
 - [Requirements](docs/1000_requirement.md), [technical plan](docs/1100_plan.md), and
   [development phases](docs/1200_phases.md): the product roadmap.
 
-Phases 1–4 are implemented. Phase 5 adds scheduled processing, notifications, and deployment.
+Phases 1–4 and the Phase 5 automation slice are implemented. Scheduled processing
+and private in-app notifications run locally; public deployment is still pending.
 Password reset remains an MVP requirement. No deployment is configured yet.
+
+### Scheduled worker and notifications
+
+After applying migrations, run a separate worker:
+
+```bash
+PYTHONPATH=apps/api uv run --env-file apps/api/.env python -m app.jobs.grouping
+```
+
+Add `--once` to process one bounded batch. Due published events receive a preview
+for organizer approval; retries cannot duplicate scheduled runs. **My account**
+contains private notifications with unread filtering and mark-as-read controls.
+See [scheduled grouping and notifications](docs/features/scheduled-grouping-and-notifications.md)
+for retries, privacy, startup, and recovery. Hosting remains a separate Phase 5 step.

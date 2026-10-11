@@ -9,6 +9,7 @@ from sqlalchemy import func, select
 from app.models import AuditLog, Event, User, utcnow
 from app.schemas.events import EventInput, EventOut, EventPage, EventPatch, VersionInput
 from app.security import Db, Organizer
+from app.services.notifications import cancelled
 
 router = APIRouter(tags=["events"])
 
@@ -148,5 +149,6 @@ def cancel_event(event_id: UUID, body: VersionInput, organizer: Organizer, db: D
     event.status = "CANCELLED"
     event.version += 1
     record_action(db, event, organizer, "event.cancelled")
+    cancelled(db, event)
     db.flush()
     return EventOut.model_validate(event)

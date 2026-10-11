@@ -29,6 +29,7 @@ from app.schemas.teams import (
     RosterOut,
 )
 from app.services.grouping import inputs, owned
+from app.services.notifications import roster_change
 from app.services.registrations import lock_event
 
 ACTIVE = {"PENDING", "CONFIRMED"}
@@ -154,6 +155,7 @@ def record(db: Session, event: Event, actor: User, action: str, before: dict[str
         )
     )
     db.flush()
+    roster_change(db, event, action, before)
 
 
 def writable(event: Event, *, confirmation: bool = False) -> None:

@@ -246,3 +246,46 @@ class RosterAction(Base):
     event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
     request_id: Mapped[UUID]
     payload_hash: Mapped[str] = mapped_column(String(64))
+
+
+class GroupingJob(Base):
+    __tablename__ = "grouping_jobs"
+    __table_args__ = (
+        CheckConstraint("status IN ('SUCCEEDED', 'BLOCKED', 'FAILED')", name="grouping_job_status"),
+        CheckConstraint("attempts > 0", name="grouping_job_attempts"),
+        CheckConstraint(
+            "(status = 'SUCCEEDED') = (run_id IS NOT NULL)", name="grouping_job_result"
+        ),
+        ForeignKeyConstraint(
+            ["run_id", "event_id"], ["grouping_runs.id", "grouping_runs.event_id"]
+        ),
+        Index("ix_grouping_jobs_status_retry", "status", "next_attempt_at"),
+    )
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"), primary_key=True)
+    status: Mapped[str] = mapped_column(String(20))
+    attempts: Mapped[int]
+    code: Mapped[str] = mapped_column(String(100))
+    message: Mapped[str] = mapped_column(String(1000))
+    run_id: Mapped[UUID | None]
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    __table_args__ = (
+        UniqueConstraint("user_id", "dedup_key", name="notification_user_key"),
+        CheckConstraint(
+            "destination IN ('ACCOUNT', 'EVENT', 'ORGANIZER')", name="notification_destination"
+        ),
+        Index("ix_notifications_user_created", "user_id", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
+    event_id: Mapped[UUID] = mapped_column(ForeignKey("events.id"))
+    dedup_key: Mapped[str] = mapped_column(String(200))
+    kind: Mapped[str] = mapped_column(String(50))
+    message: Mapped[str] = mapped_column(String(1000))
+    destination: Mapped[str] = mapped_column(String(20))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
