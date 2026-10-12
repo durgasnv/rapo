@@ -105,8 +105,9 @@ Each team card shows its active count, target size, and allowed size range.
 Attention reasons include a keyword and current counts: **Below minimum**,
 **Above maximum**, **Vacancy**, or **Confirmation overdue**. Approval is disabled
 when the count is outside the allowed range or there is no outstanding vacancy;
-nearby text explains the restriction. The API continues enforcing size limits
-independently of the browser.
+nearby text explains the restriction. Disabled approval uses muted text and a
+normal cursor so it does not look like an in-progress request. The API continues
+enforcing size limits independently of the browser.
 
 Approval and replacement show success or failure on the affected card. A valid
 continuation removes the vacancy by accepting the current count, but pending
@@ -115,6 +116,17 @@ other attention reasons rather than implying the team is ready. Refreshing the
 roster clears old action feedback and reloads the authoritative state. These
 changes use the existing roster API and reason strings, without a migration or
 new approval policy.
+
+A successful save remains successful if the follow-up event-details read fails.
+The updated roster and card success message stay visible alongside a separate
+“Change saved” warning that asks the organizer to refresh the page. The write is
+already committed; a failed read does not require resubmitting it. Save requests
+with a lost response still retain their request ID for a safe retry.
+
+Browser regressions cover replacement and approval with a failed follow-up read
+against the real API and database. Focused response fixtures cover approval with
+overdue confirmations, fully confirmed teams becoming ready, disabled styling,
+and retrying an unknown save outcome with the same request ID and version.
 
 Moves/swaps use active members from the same event and validate both resulting
 team sizes before changing anything. A valid move/swap explicitly approves those

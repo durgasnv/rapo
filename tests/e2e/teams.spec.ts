@@ -170,6 +170,17 @@ with Session(make_engine(url)) as db:
     await expect(
       attention.getByText(/Cannot approve: at least 2 active members required/),
     ).toBeVisible();
+    const eventDetailsUrl = `http://127.0.0.1:8000/organizer/events/${event.id}`;
+    const failRefresh = async (route: import("@playwright/test").Route) =>
+      route.fulfill({
+        status: 503,
+        json: { detail: "Event details unavailable" },
+      });
+    const replacementCard = roster.getByRole("region", {
+      name: (await attention.getAttribute("aria-label"))!,
+      exact: true,
+    });
+    await organizer.route(eventDetailsUrl, failRefresh);
     await attention
       .getByRole("button", { name: "Fill vacancy from waitlist", exact: true })
       .click();
@@ -179,6 +190,23 @@ with Session(make_engine(url)) as db:
     await expect(roster.getByRole("status")).toContainText(
       "Vacancy filled from the waitlist.",
     );
+    await expect(replacementCard.getByRole("alert")).toHaveText(
+      "Change saved, but event details couldn’t refresh. Refresh the page to reload them.",
+    );
+    const savedReplacement = await (
+      await owner.client.get(`/events/${event.id}/teams`)
+    ).json();
+    expect(
+      savedReplacement.teams.some(
+        (team: { members: { user_id: string; status: string }[] }) =>
+          team.members.some(
+            (member) =>
+              member.user_id === people[4].user.id &&
+              member.status === "PENDING",
+          ),
+      ),
+    ).toBe(true);
+    await organizer.unroute(eventDetailsUrl, failRefresh);
     const waitingContext = await browser.newContext({
       storageState: await people[4].client.storageState(),
     });
@@ -311,12 +339,26 @@ with Session(make_engine(url)) as db:
       name: approvalCardName!,
       exact: true,
     });
+    await organizer.route(eventDetailsUrl, failRefresh);
     await approvalCard
       .getByRole("button", { name: "Approve current team size", exact: true })
       .click();
     await expect(approvalCard.getByRole("status")).toHaveText(
       "Current size approved: 1 active member. Awaiting confirmation from 1 member.",
     );
+    await expect(approvalCard.getByRole("alert")).toHaveText(
+      "Change saved, but event details couldn’t refresh. Refresh the page to reload them.",
+    );
+    const savedApproval = await (
+      await owner.client.get(`/events/${event.id}/teams`)
+    ).json();
+    const approvedTeam = savedApproval.teams.find(
+      (team: { number: number }) =>
+        `Final team ${team.number}` === approvalCardName,
+    );
+    expect(approvedTeam.target_size).toBe(1);
+    expect(approvedTeam.status).toBe("AWAITING_CONFIRMATIONS");
+    await organizer.unroute(eventDetailsUrl, failRefresh);
     await expect(approvalCard.getByRole("heading")).toContainText(
       "AWAITING CONFIRMATIONS",
     );

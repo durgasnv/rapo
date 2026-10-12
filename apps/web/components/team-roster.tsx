@@ -12,6 +12,9 @@ import {
 } from "../lib/api";
 import { useAccount } from "./account-provider";
 
+const refreshWarningMessage =
+  "Change saved, but event details couldn’t refresh. Refresh the page to reload them.";
+
 export function TeamRoster({
   event,
   onChanged,
@@ -49,6 +52,9 @@ function RosterControls({
     teamId: string;
     message: string;
     error: boolean;
+  } | null>(null);
+  const [refreshWarning, setRefreshWarning] = useState<{
+    teamId?: string;
   } | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [refresh, setRefresh] = useState(0);
@@ -88,6 +94,7 @@ function RosterControls({
     setBusy(true);
     setError("");
     setFeedback(null);
+    setRefreshWarning(null);
     let body = values;
     if (ownerAction) {
       body = { ...values, version: data.version };
@@ -121,7 +128,12 @@ function RosterControls({
         setFeedback({ teamId, message, error: false });
       }
       pending.current = null;
-      await onChanged?.();
+      // The mutation has committed; a failed follow-up read must not report save failure.
+      try {
+        await onChanged?.();
+      } catch {
+        setRefreshWarning({ teamId });
+      }
     } catch (failure) {
       if (failure instanceof ApiError) pending.current = null;
       const message =
@@ -179,6 +191,7 @@ function RosterControls({
           onClick={() => {
             setError("");
             setFeedback(null);
+            setRefreshWarning(null);
             setRefresh((v) => v + 1);
           }}
         >
@@ -197,6 +210,11 @@ function RosterControls({
       {error && (
         <p role="alert" className="mt-4 text-red-800">
           {error}
+        </p>
+      )}
+      {refreshWarning && !refreshWarning.teamId && (
+        <p role="alert" className="mt-4 text-amber-800">
+          {refreshWarningMessage}
         </p>
       )}
       {!loaded && (
@@ -257,6 +275,11 @@ function RosterControls({
                       className={`mt-2 ${feedback.error ? "text-red-800" : "text-emerald-800"}`}
                     >
                       {feedback.message}
+                    </p>
+                  )}
+                  {refreshWarning?.teamId === team.id && (
+                    <p role="alert" className="mt-2 text-amber-800">
+                      {refreshWarningMessage}
                     </p>
                   )}
                   {team.reasons.map((reason) => (
@@ -326,7 +349,7 @@ function RosterControls({
                         Fill vacancy from waitlist
                       </button>
                       <button
-                        className="underline"
+                        className="team-approval underline"
                         disabled={busy || !validSize || !vacancy}
                         aria-describedby={`approval-help-${team.id}`}
                         onClick={() =>
