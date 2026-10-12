@@ -79,8 +79,12 @@ export function EventDetail({ id }: { id: string }) {
                 <dd>{event.capacity ?? "No fixed capacity"}</dd>
               </div>
             </dl>
-            <EventRegistration event={event} />
-            {event.status === "GROUPS_FINALIZED" && (
+            {event.status === "COMPLETED" ? (
+              <p className="mt-6 font-semibold">Event completed</p>
+            ) : (
+              <EventRegistration event={event} />
+            )}
+            {["GROUPS_FINALIZED", "COMPLETED"].includes(event.status) && (
               <TeamRoster event={event} />
             )}
           </section>

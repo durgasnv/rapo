@@ -9,6 +9,7 @@ from sqlalchemy import func, select
 from app.models import AuditLog, Event, User, utcnow
 from app.schemas.events import EventInput, EventOut, EventPage, EventPatch, VersionInput
 from app.security import Db, Organizer
+from app.services.event_completion import complete
 from app.services.notifications import cancelled
 
 router = APIRouter(tags=["events"])
@@ -85,9 +86,19 @@ def get_owned_event(event_id: UUID, organizer: Organizer, db: Db) -> EventOut:
 @router.get("/events/{event_id}", response_model=EventOut)
 def get_public_event(event_id: UUID, db: Db) -> EventOut:
     event = db.get(Event, event_id)
-    if event is None or event.status not in {"PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"}:
+    if event is None or event.status not in {
+        "PUBLISHED",
+        "GROUPS_PROPOSED",
+        "GROUPS_FINALIZED",
+        "COMPLETED",
+    }:
         raise HTTPException(404, "Event not found")
     return EventOut.model_validate(event)
+
+
+@router.post("/events/{event_id}/complete", response_model=EventOut)
+def complete_event(event_id: UUID, body: VersionInput, organizer: Organizer, db: Db) -> EventOut:
+    return EventOut.model_validate(complete(db, event_id, organizer, body.version))
 
 
 @router.post("/events", response_model=EventOut, status_code=201)

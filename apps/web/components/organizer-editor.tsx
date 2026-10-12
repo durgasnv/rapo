@@ -37,7 +37,7 @@ export function OrganizerEditor({ id }: { id?: string }) {
       active = false;
     };
   }, [id, account]);
-  async function transition(action: "publish" | "cancel") {
+  async function transition(action: "publish" | "cancel" | "complete") {
     if (!event || !account) return;
     setBusy(true);
     setError("");
@@ -52,7 +52,9 @@ export function OrganizerEditor({ id }: { id?: string }) {
       setNotice(
         action === "publish"
           ? "Your event is published."
-          : "Your event is cancelled.",
+          : action === "complete"
+            ? "Event completed. Its final roster will inform future team grouping."
+            : "Your event is cancelled.",
       );
     } catch (failure) {
       setError(
@@ -123,7 +125,12 @@ export function OrganizerEditor({ id }: { id?: string }) {
                         Publish event
                       </button>
                     )}
-                    {event.status !== "CANCELLED" && (
+                    {[
+                      "DRAFT",
+                      "PUBLISHED",
+                      "GROUPS_PROPOSED",
+                      "GROUPS_FINALIZED",
+                    ].includes(event.status) && (
                       <button
                         className="button"
                         disabled={busy}
@@ -132,16 +139,45 @@ export function OrganizerEditor({ id }: { id?: string }) {
                         Cancel event
                       </button>
                     )}
+                    {["GROUPS_FINALIZED", "IN_PROGRESS"].includes(
+                      event.status,
+                    ) && (
+                      <button
+                        className="button"
+                        disabled={busy}
+                        onClick={() => void transition("complete")}
+                      >
+                        Mark event completed
+                      </button>
+                    )}
                     {[
                       "PUBLISHED",
                       "GROUPS_PROPOSED",
                       "GROUPS_FINALIZED",
+                      "COMPLETED",
                     ].includes(event.status) && (
                       <Link className="button" href={`/events/${event.id}`}>
                         View public event
                       </Link>
                     )}
                   </div>
+                  {["GROUPS_FINALIZED", "IN_PROGRESS"].includes(
+                    event.status,
+                  ) && (
+                    <p className="mt-3 text-sm">
+                      Complete after {formatDate(event.end_at, event.timezone)}{" "}
+                      · {event.timezone}. This includes pending and confirmed
+                      final members in future collaboration history, excluding
+                      declined and withdrawn members. Completion does not verify
+                      attendance.
+                    </p>
+                  )}
+                  {event.status === "COMPLETED" && (
+                    <p className="mt-3">
+                      Completed event. The final roster is read-only and
+                      contributes to future grouping history.
+                    </p>
+                  )}
                 </section>
               )}
               {(!event || event.status === "DRAFT") && (
@@ -176,8 +212,14 @@ export function OrganizerEditor({ id }: { id?: string }) {
                 />
               )}
               {event &&
-                ["GROUPS_FINALIZED", "CANCELLED"].includes(event.status) && (
+                [
+                  "GROUPS_FINALIZED",
+                  "IN_PROGRESS",
+                  "COMPLETED",
+                  "CANCELLED",
+                ].includes(event.status) && (
                   <TeamRoster
+                    key={`${event.id}:${event.status}`}
                     event={event}
                     onChanged={async () => {
                       setEvent(

@@ -79,6 +79,7 @@ export function ParticipantRegistrations() {
                         "PUBLISHED",
                         "GROUPS_PROPOSED",
                         "GROUPS_FINALIZED",
+                        "COMPLETED",
                       ].includes(registration.event.status) ? (
                         <Link
                           className="underline"
@@ -93,7 +94,9 @@ export function ParticipantRegistrations() {
                     <p className="mt-2">
                       {registration.event.status === "CANCELLED"
                         ? "Event cancelled"
-                        : registrationLabel(registration)}
+                        : registration.event.status === "COMPLETED"
+                          ? "Event completed"
+                          : registrationLabel(registration)}
                     </p>
                     {registration.event.status === "GROUPS_FINALIZED" &&
                       registration.status === "REGISTERED" && (

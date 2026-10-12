@@ -157,8 +157,9 @@ Completed history uses actual active finalized assignments, excluding withdrawn
 or declined members. Legacy completed runs without separate final rosters still
 derive history from their stored team memberships. A final roster suppresses that
 legacy fallback for its event, preventing proposal and assignment double counting.
-Event completion APIs are not added in this slice; historical fixtures remain
-trusted test/demo data until that lifecycle action is implemented.
+Event completion is now available through the
+[completion flow](event-completion.md). Historical fixtures remain useful for
+repeatable tests and demonstrations.
 
 ## Verification and recovery
 

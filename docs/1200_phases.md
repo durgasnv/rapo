@@ -137,8 +137,8 @@ Verification passed: 91 backend tests (16 new lifecycle tests), eight live-brows
 tests, migration/schema comparison, Python/web formatting, lint, type checks, and
 the production frontend build. Tests used an isolated PostgreSQL database and
 separate browser-server ports. Hosted CI and
-deployment remain unverified. Event completion APIs are still a later lifecycle
-extension; scheduled processing and notifications are the next milestone.
+deployment remain unverified. Event completion was subsequently added as a
+focused lifecycle extension; see [event completion](features/event-completion.md).
 See [team-lifecycle.md](features/team-lifecycle.md) for behavior and recovery.
 
 ## Phase 5 — Automation and deployment (Week 7)

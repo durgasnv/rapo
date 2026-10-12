@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import type { APIRequestContext, BrowserContext } from "@playwright/test";
 
-test("finalize, confirm, decline, replace, reassign, extend deadline and export", async ({
+test("finalize, confirm, decline, replace, reassign, export and complete", async ({
   browser,
   playwright,
 }) => {
@@ -120,6 +120,12 @@ with Session(make_engine(url)) as db:
     await expect(
       roster.getByRole("heading", { name: /Team \d.*AWAITING CONFIRMATIONS/ }),
     ).toHaveCount(2);
+    await organizer
+      .getByRole("button", { name: "Mark event completed", exact: true })
+      .click();
+    await expect(organizer.getByRole("main").getByRole("alert")).toHaveText(
+      "The event must end before it can be completed",
+    );
     const aliceContext = await browser.newContext({
       storageState: await people[0].client.storageState(),
     });
@@ -374,6 +380,89 @@ with Session(make_engine(url)) as db:
         { exact: true },
       ),
     ).toBeVisible();
+    // Advance only the isolated fixture's schedule to exercise completion after event end.
+    execFileSync(
+      "uv",
+      [
+        "run",
+        "python",
+        "-c",
+        `
+import os, sys
+from datetime import timedelta
+from uuid import UUID
+from sqlalchemy.engine import make_url
+from sqlalchemy.orm import Session
+from app.db import make_engine
+from app.models import Event
+url = os.environ['RAPO_DATABASE_URL']
+assert (make_url(url).database or '').endswith('_test')
+with Session(make_engine(url)) as db:
+    event = db.get(Event, UUID(sys.argv[1]))
+    for field in ('start_at', 'end_at', 'registration_opens_at', 'registration_closes_at', 'grouping_at', 'confirmation_deadline'):
+        setattr(event, field, getattr(event, field) - timedelta(days=30))
+    db.commit()
+`,
+        event.id,
+      ],
+      { env: { ...process.env, PYTHONPATH: "apps/api" } },
+    );
+    await organizer.reload();
+    await organizer
+      .getByRole("button", { name: "Mark event completed", exact: true })
+      .click();
+    await expect(
+      organizer.getByText(
+        "Event completed. Its final roster will inform future team grouping.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(roster.getByText(/Event: COMPLETED/)).toBeVisible();
+    await expect(
+      organizer.getByRole("button", { name: "Cancel event", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      roster.getByRole("button", {
+        name: "Approve current team size",
+        exact: true,
+      }),
+    ).toHaveCount(0);
+    const completed = await (
+      await owner.client.get(`/events/${event.id}`)
+    ).json();
+    expect(completed.status).toBe("COMPLETED");
+    const bobContext = await browser.newContext({
+      storageState: await people[1].client.storageState(),
+    });
+    contexts.push(bobContext);
+    const bob = await bobContext.newPage();
+    await bob.goto("/dashboard");
+    await bob
+      .getByRole("link", { name: "Lifecycle browser workshop", exact: true })
+      .click();
+    await bob.waitForURL(`**/events/${event.id}`, { timeout: 60_000 });
+    await expect(
+      bob.getByText("Event completed", { exact: true }),
+    ).toBeVisible();
+    const completedTeam = bob.getByRole("region", {
+      name: "Your team",
+      exact: true,
+    });
+    await expect(
+      completedTeam.getByRole("heading", { name: /^Team \d/ }),
+    ).toHaveCount(1);
+    await expect(
+      completedTeam.getByRole("button", {
+        name: "Confirm my team",
+        exact: true,
+      }),
+    ).toHaveCount(0);
+    await expect(
+      completedTeam.getByRole("button", {
+        name: "Withdraw from team",
+        exact: true,
+      }),
+    ).toHaveCount(0);
   } finally {
     for (const context of contexts) await context.close();
     for (const client of clients) await client.dispose();
