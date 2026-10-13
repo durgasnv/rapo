@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
+import { OrganizerAttention } from "./organizer-attention";
 
 export function OrganizerEvents() {
   const { account, loading } = useAccount();
@@ -55,6 +56,7 @@ export function OrganizerEvents() {
           <Link className="button mb-6" href="/organizer/events/new">
             Create event
           </Link>
+          <OrganizerAttention key={account.user.id} />
           {error ? (
             <p role="alert" className="panel">
               {error}

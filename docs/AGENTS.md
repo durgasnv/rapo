@@ -48,8 +48,11 @@ For each confirmed feature:
 3. Implement the feature without unrelated refactoring.
 4. Run targeted tests and explain the results.
 5. Document meaningful behavior and trade-offs.
-6. Make one focused Conventional Commit when repository access and authorization allow.
-7. Summarize what changed, how to try it, and what to learn next.
+6. Review the full implementation diff against the approved scope, product requirements, lifecycle rules, architecture, and privacy boundaries.
+7. Review for bugs, unnecessary changes, missing tests, security issues, and breaking changes. Fix findings within the approved scope and rerun relevant checks before calling the feature complete. Report unresolved findings and limitations honestly; do not silently expand scope to unrelated work.
+8. Document the review findings and verification evidence alongside the feature explanation.
+9. Make one focused Conventional Commit when repository access and authorization allow.
+10. Summarize what changed, how to try it, how it was implemented, and what the alignment/bug review found.
 
 Favor small, understandable functions and explicit contracts. Give the developer a brief explanation of unfamiliar Python, SQLAlchemy, Next.js, or algorithm concepts. When appropriate, include a debugging question or small exercise rather than hiding all reasoning in generated code.
 
@@ -235,6 +238,8 @@ A feature is complete only when:
 - [ ] User-visible errors are actionable.
 - [ ] Meaningful technical decisions and flows are documented.
 - [ ] No unrelated or future-phase features were added.
+- [ ] The final diff was reviewed for project alignment, bugs, unnecessary changes, missing tests, security issues, and breaking changes.
+- [ ] Findings within the approved scope were fixed and relevant checks rerun; remaining findings and limitations were reported.
 - [ ] A focused Conventional Commit exists if committing was authorized and available.
 - [ ] The developer can explain what the feature does and why.
 

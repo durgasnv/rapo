@@ -8,6 +8,7 @@ test("finalize, confirm, decline, replace, reassign, export and complete", async
   browser,
   playwright,
 }) => {
+  test.setTimeout(180_000);
   const clients: APIRequestContext[] = [];
   const contexts: BrowserContext[] = [];
   const account = async (name: string) => {
@@ -110,6 +111,23 @@ with Session(make_engine(url)) as db:
     await preview
       .getByRole("button", { name: "Generate team preview", exact: true })
       .click();
+    const overview = organizer.getByRole("region", {
+      name: "Events needing attention",
+      exact: true,
+    });
+    await organizer.goto("/organizer");
+    await expect(
+      overview.getByText("Preview awaiting review.", { exact: true }),
+    ).toBeVisible();
+    await overview
+      .getByRole("link", {
+        name: "Manage Lifecycle browser workshop",
+        exact: true,
+      })
+      .click();
+    await organizer.waitForURL(`**/organizer/events/${event.id}`, {
+      timeout: 60_000,
+    });
     await preview
       .getByRole("button", { name: "Finalize these teams", exact: true })
       .click();
@@ -176,6 +194,22 @@ with Session(make_engine(url)) as db:
     await expect(
       attention.getByText(/Cannot approve: at least 2 active members required/),
     ).toBeVisible();
+    await organizer.goto("/organizer");
+    await expect(
+      overview.getByText("Below minimum: 1 team.", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      overview.getByText("Vacancy: 1 unfilled place.", { exact: true }),
+    ).toBeVisible();
+    await overview
+      .getByRole("link", {
+        name: "Manage Lifecycle browser workshop",
+        exact: true,
+      })
+      .click();
+    await organizer.waitForURL(`**/organizer/events/${event.id}`, {
+      timeout: 60_000,
+    });
     const eventDetailsUrl = `http://127.0.0.1:8000/organizer/events/${event.id}`;
     const failRefresh = async (route: import("@playwright/test").Route) =>
       route.fulfill({
@@ -213,6 +247,18 @@ with Session(make_engine(url)) as db:
       ),
     ).toBe(true);
     await organizer.unroute(eventDetailsUrl, failRefresh);
+    await organizer.goto("/organizer");
+    await expect(
+      overview.getByText("No events need attention right now.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await organizer
+      .getByRole("link", { name: "Manage event", exact: true })
+      .click();
+    await organizer.waitForURL(`**/organizer/events/${event.id}`, {
+      timeout: 60_000,
+    });
     const waitingContext = await browser.newContext({
       storageState: await people[4].client.storageState(),
     });
@@ -431,6 +477,12 @@ with Session(make_engine(url)) as db:
       await owner.client.get(`/events/${event.id}`)
     ).json();
     expect(completed.status).toBe("COMPLETED");
+    await organizer.goto("/organizer");
+    await expect(
+      overview.getByText("No events need attention right now.", {
+        exact: true,
+      }),
+    ).toBeVisible();
     const bobContext = await browser.newContext({
       storageState: await people[1].client.storageState(),
     });

@@ -95,6 +95,11 @@ textarea {
   font-size: 0.9rem;
   text-align: center;
 }
+.organizer-attention button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  text-decoration: none;
+}
 .team-approval:disabled {
   opacity: 0.45;
   cursor: default;

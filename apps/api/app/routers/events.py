@@ -2,13 +2,15 @@ from datetime import UTC, date, datetime, time, timedelta
 from typing import Annotated, Literal
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from pydantic import ValidationError
 from sqlalchemy import func, select
 
 from app.models import AuditLog, Event, User, utcnow
+from app.schemas.attention import AttentionPage
 from app.schemas.events import EventInput, EventOut, EventPage, EventPatch, VersionInput
 from app.security import Db, Organizer
+from app.services.attention import overview
 from app.services.event_completion import complete
 from app.services.notifications import cancelled
 
@@ -62,6 +64,18 @@ def list_events(
         offset=offset,
         limit=limit,
     )
+
+
+@router.get("/organizer/attention", response_model=AttentionPage)
+def attention(
+    organizer: Organizer,
+    db: Db,
+    response: Response,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+) -> AttentionPage:
+    response.headers["Cache-Control"] = "no-store"
+    return overview(db, organizer, offset, limit)
 
 
 @router.get("/organizer/events", response_model=list[EventOut])

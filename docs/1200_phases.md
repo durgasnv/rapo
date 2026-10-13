@@ -165,6 +165,12 @@ Verification passed: 112 backend tests, nine live-browser tests, worker CLI smok
 migration/schema comparison, formatting, lint, types, and production build.
 Hosting, HTTPS, backups, demo seeding, and deployment verification remain open.
 
+**Organizer attention overview (2026-10-13):** Added an owner-only, paginated
+summary on Manage events for proposed groupings, recorded job failures/blocks,
+and finalized roster attention reasons. It reuses existing data and remediation
+flows without changing grouping policy. See
+[organizer-attention.md](features/organizer-attention.md). Deployment remains open.
+
 ## Phase 6 — Polish, measurement, portfolio packaging (Week 8)
 
 **Goal:** Make the project interview-ready.

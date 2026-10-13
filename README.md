@@ -180,6 +180,8 @@ credentials. Do not remove the volume unless you intend to delete its data.
 - [Grouping previews](docs/features/grouping-preview.md) and
   [grouping algorithm](docs/concepts/grouping-algorithm.md): Phase 3 behavior,
   scoring, edge cases, and reproducibility.
+- [Organizer attention overview](docs/features/organizer-attention.md): review
+  proposals, grouping failures, vacancies, and overdue confirmations in one panel.
 - [Event completion](docs/features/event-completion.md): close ended events and
   make final assignments available to future collaboration history.
 - [Final teams and roster repair](docs/features/team-lifecycle.md): Phase 4
