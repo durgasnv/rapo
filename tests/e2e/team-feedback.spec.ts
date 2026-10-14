@@ -71,6 +71,10 @@ for (const outcome of ["READY", "NEEDS_ATTENTION", "RETRY"] as const) {
             csrf_token: "test-csrf",
           },
         });
+      if (path === `/organizer/events/${eventId}/audit`)
+        return route.fulfill({
+          json: { items: [], total: 0, offset: 0, limit: 20 },
+        });
       if (path === `/organizer/events/${eventId}`)
         return route.fulfill({ json: event });
       if (path === `/events/${eventId}/teams`)

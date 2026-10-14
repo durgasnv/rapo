@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EventData, apiRequest, formatDate } from "../lib/api";
 import { useAccount } from "./account-provider";
 import { EventForm } from "./event-form";
+import { EventAudit } from "./event-audit";
 import { TeamRoster } from "./team-roster";
 import { GroupingSchedule } from "./grouping-schedule";
 import { GroupingPreview } from "./grouping-preview";
@@ -195,6 +196,13 @@ export function OrganizerEditor({ id }: { id?: string }) {
                     }}
                   />
                 </div>
+              )}
+              {event && (
+                <EventAudit
+                  key={`${event.id}:${account.user.id}:${event.version}`}
+                  eventId={event.id}
+                  timezone={event.timezone}
+                />
               )}
               {event && <GroupingSchedule event={event} />}
               {event && (

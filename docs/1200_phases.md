@@ -176,7 +176,8 @@ flows without changing grouping policy. See
 **Goal:** Make the project interview-ready.
 
 - [ ] Improve responsive layout, loading/empty/error states, and keyboard accessibility.
-- [ ] Add audit log view and clear grouping explanations.
+- [x] Add owner-only event audit log view.
+- [ ] Improve grouping explanations for release.
 - [ ] Benchmark algorithm against random baseline on seeded datasets.
 - [ ] Measure API response times and grouping latency at target load.
 - [ ] Add screenshots, short walkthrough video, architecture diagram, and API examples.
@@ -185,6 +186,12 @@ flows without changing grouping policy. See
 
 **Deliverable:** Resume-ready project with live demo, evidence, and documentation.
 **Exit test:** A reviewer can use the demo without needing setup help.
+
+**Event activity view (2026-10-14):** Added owner-only, paginated audit reads and
+an activity panel on Manage event. Existing records are translated into readable
+actions with actor names and event-timezone timestamps, without exposing raw
+snapshots. See [event-audit.md](features/event-audit.md). Other Phase 6 work and
+public deployment remain open.
 
 ## Weekly cadence
 

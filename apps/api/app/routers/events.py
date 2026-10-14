@@ -8,9 +8,11 @@ from sqlalchemy import func, select
 
 from app.models import AuditLog, Event, User, utcnow
 from app.schemas.attention import AttentionPage
+from app.schemas.audit import AuditPage
 from app.schemas.events import EventInput, EventOut, EventPage, EventPatch, VersionInput
 from app.security import Db, Organizer
 from app.services.attention import overview
+from app.services.audit import read as read_audit
 from app.services.event_completion import complete
 from app.services.notifications import cancelled
 
@@ -87,6 +89,17 @@ def my_events(organizer: Organizer, db: Db) -> list[EventOut]:
         .limit(100)
     ).all()
     return [EventOut.model_validate(event) for event in events]
+
+
+@router.get("/organizer/events/{event_id}/audit", response_model=AuditPage)
+def event_audit(
+    event_id: UUID,
+    organizer: Organizer,
+    db: Db,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+) -> AuditPage:
+    return read_audit(db, event_id, organizer, offset, limit)
 
 
 @router.get("/organizer/events/{event_id}", response_model=EventOut)

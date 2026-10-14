@@ -138,6 +138,16 @@ with Session(make_engine(url)) as db:
     await expect(
       roster.getByRole("heading", { name: /Team \d.*AWAITING CONFIRMATIONS/ }),
     ).toHaveCount(2);
+    const activity = organizer.getByRole("region", {
+      name: "Event activity",
+      exact: true,
+    });
+    await expect(
+      activity.getByRole("heading", { name: "Teams finalized", exact: true }),
+    ).toBeVisible();
+    await expect(
+      activity.getByText("By Team organizer", { exact: true }).first(),
+    ).toBeVisible();
     await organizer
       .getByRole("button", { name: "Mark event completed", exact: true })
       .click();
@@ -246,6 +256,23 @@ with Session(make_engine(url)) as db:
           ),
       ),
     ).toBe(true);
+    await activity
+      .getByRole("button", { name: "Refresh activity", exact: true })
+      .click();
+    await expect(
+      activity.getByRole("heading", {
+        name: "Vacancy filled from waitlist",
+        exact: true,
+      }),
+    ).toBeVisible();
+    const savedActivity = await (
+      await owner.client.get(`/organizer/events/${event.id}/audit`)
+    ).json();
+    expect(
+      savedActivity.items.filter(
+        (entry: { action: string }) => entry.action === "team.replace",
+      ),
+    ).toHaveLength(1);
     await organizer.unroute(eventDetailsUrl, failRefresh);
     await organizer.goto("/organizer");
     await expect(
@@ -464,6 +491,27 @@ with Session(make_engine(url)) as db:
       ),
     ).toBeVisible();
     await expect(roster.getByText(/Event: COMPLETED/)).toBeVisible();
+    await expect(
+      activity.getByRole("heading", { name: "Event completed", exact: true }),
+    ).toBeVisible();
+    await expect(
+      activity.getByRole("heading", {
+        name: "Team members reassigned",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      activity.getByRole("heading", {
+        name: "Confirmation deadline extended",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      activity.getByRole("heading", {
+        name: "Current team size approved",
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(
       organizer.getByRole("button", { name: "Cancel event", exact: true }),
     ).toHaveCount(0);
