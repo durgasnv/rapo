@@ -58,7 +58,24 @@ Four browser checks passed through that production build's `/api` proxy:
 sign-in persistence and participant authorization, organizer event management,
 health connectivity, and retry after connection failure.
 
-Hosted creation, real credentials, production migration, Vercel SMTP delivery, and
-the optional hosted browser test have not run. The user will deploy manually.
+Production database access, Vercel SMTP delivery, and the full hosted browser
+journey have not been verified. The user deploys manually.
 Free quotas, cold starts, short database restore history, in-process mail delivery,
 and potentially shared proxy client-IP quotas limit the demo's release readiness.
+
+### Homepage routing follow-up
+
+The user's first deployment at `https://rapo.vercel.app` was READY on commit
+`1da958c`, with the Services framework and expected alias. Public checks returned
+200 for `/sign-in` and `/api/health`, but `/` returned a Vercel `NOT_FOUND` 404.
+This isolates the observed failure to homepage ingress; it does not establish
+database readiness or successful sign-in. Build-log access returned 403, and no
+authenticated Vercel CLI fallback was available.
+
+The configuration now explicitly routes `/` to the frontend with lookup path `/`
+and uses the documented `/(.*)` frontend catch-all after the API rule. This
+addresses the suspected empty-path handling of the previous wildcard without
+changing application routes, cookies, or API policy. JSON schema validation and
+representative route-matching checks cover the configuration change. It still
+needs verification on a deployment of the new commit. Push the commit and deploy
+the newest `main` revision, then check `/`, `/sign-in`, and `/api/health` again.
