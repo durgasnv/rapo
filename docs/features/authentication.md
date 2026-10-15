@@ -60,9 +60,10 @@ session rotation/revocation, role-injection rejection, CSRF and origin failures,
 throttling, and private-response caching. Browser tests cover signup, refresh,
 logout, login, and participant denial of organizer access.
 
-Password reset, email verification, account deletion/retention, MFA, and session
-management across devices are not implemented. Password reset remains an MVP
-requirement to complete before release. The current cookie setup expects frontend
+[Email password reset](password-reset.md) revokes all existing sessions and reset
+links when a new password is saved. Email verification, account deletion/retention,
+MFA, and a device-session management screen are not implemented.
+The current cookie setup expects frontend
 and API on the same site (localhost with different ports during development).
 A cross-site production domain arrangement needs an explicit cookie/CSRF design.
 

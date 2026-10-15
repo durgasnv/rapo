@@ -47,6 +47,16 @@ class LoginSession(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
 
 
+class PasswordReset(Base):
+    __tablename__ = "password_resets"
+    __table_args__ = (CheckConstraint("expires_at > created_at", name="password_reset_expiry"),)
+
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
 class AuthRateLimit(Base):
     __tablename__ = "auth_rate_limits"
 

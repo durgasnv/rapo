@@ -182,6 +182,8 @@ credentials. Do not remove the volume unless you intend to delete its data.
   scoring, edge cases, and reproducibility.
 - [Event activity](docs/features/event-audit.md): owner-only audit timeline with
   readable actions, actor names, timestamps, and pagination.
+- [Password reset](docs/features/password-reset.md): Gmail SMTP setup, expiring
+  email links, session revocation, recovery, and delivery limitations.
 - [Organizer attention overview](docs/features/organizer-attention.md): review
   proposals, grouping failures, vacancies, and overdue confirmations in one panel.
 - [Event completion](docs/features/event-completion.md): close ended events and
@@ -195,7 +197,8 @@ credentials. Do not remove the volume unless you intend to delete its data.
 
 Phases 1–4 and the Phase 5 automation slice are implemented. Scheduled processing
 and private in-app notifications run locally; public deployment is still pending.
-Password reset remains an MVP requirement. No deployment is configured yet.
+Email password reset is implemented; configure SMTP credentials and verify real
+delivery before release. No deployment is configured yet.
 
 ### Scheduled worker and notifications
 

@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, StringConstraints
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -17,6 +17,7 @@ from app.security import (
     start_session,
     verify_password,
 )
+from app.services import password_reset
 
 router = APIRouter(tags=["authentication"])
 
@@ -65,7 +66,7 @@ def register(body: RegisterInput, request: Request, response: Response, db: Db) 
 
 @router.post("/auth/login", response_model=SessionOut, dependencies=[Depends(guard_auth)])
 def login(body: LoginInput, request: Request, response: Response, db: Db) -> SessionOut:
-    user = db.scalar(select(User).where(User.email == str(body.email).lower()))
+    user = db.scalar(select(User).where(User.email == str(body.email).lower()).with_for_update())
     password = body.password.get_secret_value()
     if not verify_password(password, user.password_hash if user else DUMMY_HASH) or user is None:
         raise HTTPException(401, "Email or password is incorrect")
@@ -94,3 +95,52 @@ def logout(identity: CurrentIdentity, db: Db, response: Response, request: Reque
         samesite="lax",
     )
     response.headers["Cache-Control"] = "no-store"
+
+
+class ForgotInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    email: EmailStr
+
+
+class ResetInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    token: SecretStr = Field(min_length=43, max_length=43)
+    password: SecretStr = Field(min_length=12, max_length=128)
+
+
+class MessageOut(BaseModel):
+    message: str
+
+
+@router.post("/auth/forgot-password", response_model=MessageOut, dependencies=[Depends(guard_auth)])
+def forgot_password(
+    body: ForgotInput, request: Request, tasks: BackgroundTasks, db: Db
+) -> MessageOut:
+    config = request.app.state.settings
+    if not password_reset.mail_configured(config):
+        raise HTTPException(503, "Password reset is temporarily unavailable.")
+    tasks.add_task(password_reset.issue_and_email, db.get_bind(), config, str(body.email).lower())
+    return MessageOut(
+        message=(
+            "If an account exists for that email, a reset link will be sent. "
+            "Check your inbox and spam folder."
+        )
+    )
+
+
+@router.post("/auth/reset-password", response_model=MessageOut, dependencies=[Depends(guard_auth)])
+def reset_password(
+    body: ResetInput, request: Request, response: Response, tasks: BackgroundTasks, db: Db
+) -> MessageOut:
+    email = password_reset.redeem(
+        db, body.token.get_secret_value(), body.password.get_secret_value()
+    )
+    response.delete_cookie(
+        COOKIE_NAME,
+        path="/",
+        secure=request.app.state.settings.cookie_secure,
+        httponly=True,
+        samesite="lax",
+    )
+    tasks.add_task(password_reset.notify_reset, request.app.state.settings, email)
+    return MessageOut(message="Your password has been reset. Sign in with your new password.")

@@ -92,6 +92,11 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           {busy ? "Please wait…" : isRegister ? "Create account" : "Sign in"}
         </button>
       </form>
+      {!isRegister && (
+        <Link className="mt-6 inline-block underline" href="/forgot-password">
+          Forgot password?
+        </Link>
+      )}
       <p className="mt-6">
         {isRegister ? "Already have an account? " : "New to rapo.? "}
         <Link className="underline" href={isRegister ? "/sign-in" : "/sign-up"}>

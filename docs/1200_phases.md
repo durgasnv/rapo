@@ -38,8 +38,9 @@ the requirements remain open and must be resolved before the affected features.
 **Implementation status:** Phase 1 flow implemented and exercised against
 PostgreSQL and a live browser. Organizer access is granted through a trusted
 server command. Published events are read-only in this slice; schedule inputs use
-UTC and public details use the configured timezone. Password reset remains an MVP
-requirement before release. Hosted CI/deployment has not been run in this session.
+UTC and public details use the configured timezone. Email password reset is
+implemented; SMTP setup and real delivery verification are required before release.
+Hosted CI/deployment has not been run in this session.
 
 **Recovery checkpoint (2026-10-10):** Restored locked Python dependencies and
 verified with the installed Node.js 24 runtime. All 26 API tests passed against an
