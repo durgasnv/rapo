@@ -7,6 +7,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.base import RequestResponseEndpoint
 
 from app.core.config import Settings
@@ -68,6 +70,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @application.get("/health", response_model=HealthResponse, tags=["health"])
     def health() -> HealthResponse:
+        return HealthResponse()
+
+    @application.get("/ready", response_model=HealthResponse, tags=["health"])
+    def ready() -> HealthResponse | JSONResponse:
+        try:
+            with engine.connect() as connection:
+                # Check the latest required schema as well as database connectivity.
+                connection.execute(text("SELECT token_hash FROM password_resets LIMIT 0"))
+        except SQLAlchemyError:
+            return JSONResponse(
+                status_code=503,
+                content={"detail": "Service is not ready"},
+                headers={"Cache-Control": "no-store"},
+            )
         return HealthResponse()
 
     application.include_router(auth.router)

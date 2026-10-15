@@ -1,13 +1,14 @@
-from typing import Literal
+from typing import Literal, Self
 from urllib.parse import urlsplit
 
-from pydantic import EmailStr, Field, SecretStr, field_validator
+from pydantic import EmailStr, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="RAPO_", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="RAPO_", extra="ignore", hide_input_in_errors=True)
 
+    environment: Literal["development", "production"] = "development"
     cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
     database_url: str = "postgresql+psycopg://rapo@localhost:5432/rapo"
     cookie_secure: bool = False
@@ -25,6 +26,40 @@ class Settings(BaseSettings):
     reset_token_ttl_seconds: int = Field(default=1800, ge=300, le=86400)
     reset_email_rate_limit: int = Field(default=3, ge=1)
     reset_email_window_seconds: int = Field(default=900, ge=60)
+
+    @field_validator("database_url")
+    @classmethod
+    def postgres_driver(cls, value: str) -> str:
+        # Hosting providers supply libpq URLs; this app installs psycopg 3 only.
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix) :]
+        return value
+
+    @model_validator(mode="after")
+    def production_security(self) -> Self:
+        if self.environment != "production":
+            return self
+        if not self.cookie_secure:
+            raise ValueError("Production requires secure cookies")
+        if not self.reset_frontend_url.startswith("https://"):
+            raise ValueError("Production requires an HTTPS reset frontend URL")
+        if not self.cors_origins or self.reset_frontend_url not in self.cors_origins:
+            raise ValueError("Production CORS must include the reset frontend origin")
+        for origin in self.cors_origins:
+            parts = urlsplit(origin)
+            if (
+                parts.scheme != "https"
+                or not parts.hostname
+                or "*" in origin
+                or parts.username
+                or parts.password
+                or parts.path
+                or parts.query
+                or parts.fragment
+            ):
+                raise ValueError("Production CORS entries must be explicit HTTPS origins")
+        return self
 
     @field_validator("reset_frontend_url")
     @classmethod

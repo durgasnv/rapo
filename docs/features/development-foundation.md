@@ -5,6 +5,10 @@ This document records the original Phase 0 slice. Phase 1 adds
 [database schema](../concepts/database-and-migrations.md). See the README for
 current setup commands and verification.
 
+The deployment slice now defaults browser requests to the same-origin `/api`
+proxy. The direct browser-to-port-8000 flow below records the original Phase 0
+behavior and remains available through an explicit local API URL override.
+
 ## Purpose and user experience
 
 Phase 0 proves that the browser and API can communicate before we add accounts or

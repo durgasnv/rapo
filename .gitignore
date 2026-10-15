@@ -18,3 +18,7 @@ test-results/
 !.env.example
 !.env.*.example
 .DS_Store
+.vercel/
+backups/
+*.dump
+*.dump.enc

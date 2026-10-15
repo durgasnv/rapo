@@ -166,6 +166,15 @@ Verification passed: 112 backend tests, nine live-browser tests, worker CLI smok
 migration/schema comparison, formatting, lint, types, and production build.
 Hosting, HTTPS, backups, demo seeding, and deployment verification remain open.
 
+**Manual deployment preparation (2026-10-15):** Added free-tier Vercel Services
+configuration, Neon environment templates, production settings validation,
+database readiness, opt-in scheduled GitHub Actions grouping, explicit release
+operations, encrypted backup artifacts, and a restore rehearsal command. See
+[the manual deployment guide](../deploy/README.md). Files are prepared; hosted
+resources, migration, Gmail delivery, and live journey verification remain manual
+release tasks. Public grouping schedules run every 15 minutes; private schedules
+run hourly to conserve included runner minutes. No paid resources are configured.
+
 **Organizer attention overview (2026-10-13):** Added an owner-only, paginated
 summary on Manage events for proposed groupings, recorded job failures/blocks,
 and finalized roster attention reasons. It reuses existing data and remediation

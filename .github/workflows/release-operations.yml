@@ -1,0 +1,92 @@
+name: Release operations
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Explicit production operation
+        type: choice
+        required: true
+        options: [preflight, migrate, mail-check, backup]
+  schedule:
+    - cron: "37 3 * * 0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-release-operations
+  cancel-in-progress: false
+
+jobs:
+  operations:
+    if: >-
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch) &&
+      (github.event_name == 'workflow_dispatch' ||
+      vars.RAPO_BACKUPS_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen --no-dev
+      - name: Run selected operation
+        run: |
+          set -euo pipefail
+          test -n "$RAPO_DATABASE_URL"
+          case "$RELEASE_OPERATION" in
+            migrate)
+              uv run --no-sync alembic upgrade head
+              uv run --no-sync alembic check
+              ;;
+            preflight|mail-check) ;;
+            backup)
+              test -n "$RAPO_BACKUP_PASSPHRASE"
+              mkdir -p backups
+              trap 'rm -f backups/rapo.dump' EXIT
+              uv run --no-sync python -m app.operations backup backups/rapo.dump
+              openssl enc -aes-256-cbc -salt -pbkdf2 -iter 600000 \
+                -in backups/rapo.dump -out backups/rapo.dump.enc \
+                -pass env:RAPO_BACKUP_PASSPHRASE
+              ;;
+            *) exit 1 ;;
+          esac
+        env:
+          PYTHONPATH: apps/api
+          RELEASE_OPERATION: ${{ github.event_name == 'schedule' && 'backup' || inputs.operation }}
+          RAPO_ENVIRONMENT: production
+          RAPO_COOKIE_SECURE: "true"
+          RAPO_RESET_FRONTEND_URL: ${{ vars.RAPO_FRONTEND_URL }}
+          RAPO_CORS_ORIGINS: ${{ format('["{0}"]', vars.RAPO_FRONTEND_URL) }}
+          RAPO_DATABASE_URL: ${{ secrets.RAPO_MIGRATION_DATABASE_URL }}
+          RAPO_BACKUP_PASSPHRASE: ${{ secrets.RAPO_BACKUP_PASSPHRASE }}
+      - name: Verify mail configuration or send one check email
+        if: inputs.operation == 'preflight' || inputs.operation == 'mail-check'
+        run: uv run --no-sync python -m app.operations "$RELEASE_OPERATION"
+        env:
+          PYTHONPATH: apps/api
+          RELEASE_OPERATION: ${{ inputs.operation }}
+          RAPO_ENVIRONMENT: production
+          RAPO_COOKIE_SECURE: "true"
+          RAPO_RESET_FRONTEND_URL: ${{ vars.RAPO_FRONTEND_URL }}
+          RAPO_CORS_ORIGINS: ${{ format('["{0}"]', vars.RAPO_FRONTEND_URL) }}
+          RAPO_DATABASE_URL: ${{ secrets.RAPO_MIGRATION_DATABASE_URL }}
+          RAPO_SMTP_HOST: smtp.gmail.com
+          RAPO_SMTP_PORT: "587"
+          RAPO_SMTP_SECURITY: starttls
+          RAPO_SMTP_USERNAME: ${{ secrets.RAPO_SMTP_USERNAME }}
+          RAPO_SMTP_SENDER: ${{ secrets.RAPO_SMTP_SENDER }}
+          RAPO_SMTP_PASSWORD: ${{ secrets.RAPO_SMTP_PASSWORD }}
+      - name: Retain encrypted backup only
+        if: github.event_name == 'schedule' || inputs.operation == 'backup'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: rapo-backup-${{ github.run_id }}
+          path: backups/rapo.dump.enc
+          retention-days: 14
+          if-no-files-found: error

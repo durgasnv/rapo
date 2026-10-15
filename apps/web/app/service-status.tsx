@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 type HealthState = "loading" | "online" | "offline";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export function ServiceStatus() {
   const [status, setStatus] = useState<HealthState>("loading");

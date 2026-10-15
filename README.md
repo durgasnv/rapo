@@ -51,7 +51,7 @@ npm run dev
 Open <http://localhost:3000>, create an account, and explore events. The expandable
 service status shows “Connected to rapo.” and `{ "status": "ok" }`.
 API documentation is at <http://localhost:8000/docs>.
-The health endpoint reports API liveness only; it does not query PostgreSQL.
+The health endpoint reports API liveness only; `/ready` also checks database schema access.
 
 To try the organizer flow, first create an account, then grant access from the
 trusted server terminal:
@@ -102,7 +102,9 @@ for participant sign-ins, worker behavior, and the 120-request concurrency check
 
 | Variable                                            | Where                   | Purpose                                                                                  |
 | --------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL`                               | `apps/web/.env.local`   | Browser-visible API base URL; defaults to `http://localhost:8000`                        |
+| `NEXT_PUBLIC_API_URL`                               | `apps/web/.env.local`   | Browser-visible API base URL; defaults to `/api`                                         |
+| `RAPO_API_ORIGIN`                                   | `apps/web/.env.local`   | Next.js proxy target for local development; defaults to `http://localhost:8000`          |
+| `RAPO_ENVIRONMENT`                                  | API process environment | Set `production` to require secure cookies and explicit HTTPS frontend origins           |
 | `RAPO_CORS_ORIGINS`                                 | API process environment | JSON array of allowed frontend origins; defaults to localhost and 127.0.0.1 on port 3000 |
 | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Root `.env`             | Local PostgreSQL configuration                                                           |
 | `POSTGRES_PORT`                                     | Root `.env`             | Host port for PostgreSQL; defaults to 5432                                               |
@@ -116,8 +118,9 @@ Restart Next.js after changing its environment file. The API reads environment
 variables from its process; it does not load the root `.env` automatically.
 Database passwords belong only on the server and must never use a
 `NEXT_PUBLIC_` variable. PostgreSQL binds to the local loopback interface.
-Use the same hostname for the browser and API URL: pair `localhost` with
-`localhost`, or `127.0.0.1` with `127.0.0.1`, so same-site session cookies work.
+The default `/api` path keeps browser requests on the website's origin. If you
+override it with a direct API URL locally, use matching hostnames: pair
+`localhost` with `localhost`, or `127.0.0.1` with `127.0.0.1`.
 Production deployments need HTTPS, secure cookies, and reviewed proxy settings.
 
 ## Checks
@@ -184,6 +187,8 @@ credentials. Do not remove the volume unless you intend to delete its data.
   readable actions, actor names, timestamps, and pagination.
 - [Password reset](docs/features/password-reset.md): Gmail SMTP setup, expiring
   email links, session revocation, recovery, and delivery limitations.
+- [Manual free deployment](deploy/README.md): Vercel Services, Neon Free,
+  migrations, environment settings, scheduled grouping, and backup recovery.
 - [Organizer attention overview](docs/features/organizer-attention.md): review
   proposals, grouping failures, vacancies, and overdue confirmations in one panel.
 - [Event completion](docs/features/event-completion.md): close ended events and
@@ -198,7 +203,8 @@ credentials. Do not remove the volume unless you intend to delete its data.
 Phases 1–4 and the Phase 5 automation slice are implemented. Scheduled processing
 and private in-app notifications run locally; public deployment is still pending.
 Email password reset is implemented; configure SMTP credentials and verify real
-delivery before release. No deployment is configured yet.
+delivery before release. Deployment files are prepared for manual setup; no hosted
+deployment has been verified in this session.
 
 ### Scheduled worker and notifications
 
