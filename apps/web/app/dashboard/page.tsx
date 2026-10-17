@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAccount } from "../../components/account-provider";
+import { EventList } from "../../components/event-list";
 import { Notifications } from "../../components/notifications";
 import { ParticipantRegistrations } from "../../components/participant-registrations";
 
@@ -23,20 +24,14 @@ export default function Dashboard() {
       ) : (
         <>
           <h1>Hello, {account.user.name}.</h1>
-          <p className="intro">You’re signed in as {account.user.email}.</p>
-          <section className="panel">
-            <h2>Make a new connection.</h2>
-            <p className="my-4">
-              Discover what your community is planning and find your next event.
-            </p>
-            <Link className="button" href="/events">
-              Explore events
+          <p className="intro">Find your next event and meet your community.</p>
+          {account.user.role === "organizer" && (
+            <Link className="mb-6 inline-block underline" href="/organizer">
+              Manage your events
             </Link>
-            {account.user.role === "organizer" && (
-              <Link className="ml-5 underline" href="/organizer">
-                Manage your events
-              </Link>
-            )}
+          )}
+          <section aria-label="Community events" className="mb-10">
+            <EventList />
           </section>
           <Notifications key={`notifications:${account.user.id}`} />
           <ParticipantRegistrations key={account.user.id} />

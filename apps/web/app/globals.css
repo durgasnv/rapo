@@ -32,6 +32,11 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
+summary:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
 .page-shell {
   max-width: 72rem;
   margin: 0 auto;

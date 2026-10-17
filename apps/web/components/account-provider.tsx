@@ -102,7 +102,7 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
             <span>Checking account…</span>
           ) : account ? (
             <>
-              <Link href="/dashboard">My account</Link>
+              <Link href="/dashboard">Dashboard</Link>
               {account.user.role === "organizer" && (
                 <Link href="/organizer">Manage events</Link>
               )}

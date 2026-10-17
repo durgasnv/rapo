@@ -140,3 +140,47 @@ def test_public_pagination_and_private_status_filter(client: TestClient, db: Ses
     assert page["total"] == 2 and len(page["items"]) == 1
     assert client.get("/events?status=DRAFT").status_code == 422
     assert client.get("/events?date_from=2100-01-01").json()["total"] == 0
+
+
+@pytest.mark.parametrize("sort", ["soonest", "latest", "title"])
+def test_sorting_is_stable_before_pagination_and_combines_with_filters(
+    client: TestClient, db: Session, sort: str
+) -> None:
+    make_organizer(client, db)
+    events = []
+    base = datetime.now(UTC)
+    for days, title in [(12, "Zebra"), (10, "beta"), (11, "Alpha"), (11, "alpha")]:
+        body = event_body() | {
+            "title": title,
+            "start_at": (base + timedelta(days=days)).isoformat(),
+            "end_at": (base + timedelta(days=days, hours=2)).isoformat(),
+        }
+        event = client.post("/events", json=body).json()
+        assert client.post(f"/events/{event['id']}/publish", json={"version": 1}).status_code == 200
+        events.append(event)
+    # A draft cannot enter the public listing through any sort option.
+    client.post("/events", json=event_body() | {"title": "AAA private draft"})
+
+    def order(event):
+        if sort == "title":
+            return event["title"].lower(), event["id"]
+        timestamp = datetime.fromisoformat(event["start_at"]).timestamp()
+        return (-timestamp if sort == "latest" else timestamp), event["id"]
+
+    expected = sorted(events, key=order)
+    page = client.get(f"/events?sort={sort}&offset=1&limit=2").json()
+    assert page["total"] == 4
+    assert [event["id"] for event in page["items"]] == [e["id"] for e in expected[1:3]]
+    day = (base + timedelta(days=11)).date().isoformat()
+    filtered = client.get(
+        f"/events?sort={sort}&date_from={day}&date_to={day}&status=PUBLISHED"
+    ).json()
+    assert filtered["total"] == 2
+    assert [event["id"] for event in filtered["items"]] == [
+        event["id"] for event in expected if event["title"].lower() == "alpha"
+    ]
+    assert client.get(f"/events?sort={sort}&date_to=9999-12-31").json()["total"] == 4
+
+
+def test_invalid_sort_is_rejected(client: TestClient) -> None:
+    assert client.get("/events?sort=unknown").status_code == 422

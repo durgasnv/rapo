@@ -1,20 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EventPage, apiRequest, formatDate } from "../lib/api";
 
 export function EventList() {
   const [page, setPage] = useState<EventPage | null>(null);
   const [error, setError] = useState("");
   const [offset, setOffset] = useState(0);
-  const [filters, setFilters] = useState({ from: "", to: "" });
+  const [filters, setFilters] = useState({ from: "", to: "", status: "" });
+  const [sort, setSort] = useState("soonest");
+  const [filterError, setFilterError] = useState("");
+  const filterMenu = useRef<HTMLDetailsElement>(null);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
-    const query = new URLSearchParams({ limit: "12", offset: String(offset) });
+    const query = new URLSearchParams({
+      limit: "12",
+      offset: String(offset),
+      sort,
+    });
     if (filters.from) query.set("date_from", filters.from);
     if (filters.to) query.set("date_to", filters.to);
+    if (filters.status) query.set("status", filters.status);
     apiRequest<EventPage>(`/events?${query}`)
       .then((data) => {
         if (active) {
@@ -33,34 +41,102 @@ export function EventList() {
     return () => {
       active = false;
     };
-  }, [offset, filters, attempt]);
+  }, [offset, filters, sort, attempt]);
+
+  const filterCount = Object.values(filters).filter(Boolean).length;
 
   return (
     <>
-      <form
-        className="panel mb-6 flex flex-wrap items-end gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const form = new FormData(event.currentTarget);
-          setPage(null);
-          setError("");
-          setOffset(0);
-          setFilters({
-            from: String(form.get("from") || ""),
-            to: String(form.get("to") || ""),
-          });
-        }}
-      >
-        <label>
-          Starts on or after (UTC)
-          <input name="from" type="date" />
-        </label>
-        <label>
-          Starts on or before (UTC)
-          <input name="to" type="date" />
-        </label>
-        <button className="button">Filter events</button>
-      </form>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm text-stone-600" aria-live="polite">
+          {page
+            ? `${page.total} event${page.total === 1 ? "" : "s"}`
+            : "Community events"}
+        </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <details ref={filterMenu} className="relative">
+            <summary className="cursor-pointer rounded-full border border-stone-300 px-5 py-2 text-sm font-semibold">
+              Filter{filterCount > 0 ? ` (${filterCount})` : ""}
+            </summary>
+            <form
+              aria-label="Filter events"
+              className="panel absolute left-0 z-10 mt-2 grid w-[min(20rem,calc(100vw-3rem))] gap-4 shadow-lg"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const form = new FormData(event.currentTarget);
+                const next = {
+                  from: String(form.get("from") || ""),
+                  to: String(form.get("to") || ""),
+                  status: String(form.get("status") || ""),
+                };
+                if (next.from && next.to && next.from > next.to) {
+                  setFilterError("Start date must not be after end date.");
+                  return;
+                }
+                setFilterError("");
+                setPage(null);
+                setError("");
+                setOffset(0);
+                setFilters(next);
+                if (filterMenu.current) filterMenu.current.open = false;
+              }}
+              onReset={() => {
+                setFilterError("");
+                setError("");
+                setPage(null);
+                setOffset(0);
+                setFilters({ from: "", to: "", status: "" });
+                if (filterMenu.current) filterMenu.current.open = false;
+              }}
+            >
+              <label>
+                Starts on or after (UTC)
+                <input name="from" type="date" />
+              </label>
+              <label>
+                Starts on or before (UTC)
+                <input name="to" type="date" />
+              </label>
+              <label>
+                Event status
+                <select name="status" defaultValue="">
+                  <option value="">All available events</option>
+                  <option value="PUBLISHED">Published</option>
+                  <option value="GROUPS_PROPOSED">Groups proposed</option>
+                  <option value="GROUPS_FINALIZED">Groups finalized</option>
+                </select>
+              </label>
+              {filterError && (
+                <p role="alert" className="text-red-800">
+                  {filterError}
+                </p>
+              )}
+              <div className="flex flex-wrap items-center gap-4">
+                <button className="button">Apply filters</button>
+                <button type="reset" className="underline">
+                  Clear filters
+                </button>
+              </div>
+            </form>
+          </details>
+          <label className="flex items-center gap-2 text-sm">
+            Sort
+            <select
+              value={sort}
+              onChange={(event) => {
+                setPage(null);
+                setError("");
+                setOffset(0);
+                setSort(event.target.value);
+              }}
+            >
+              <option value="soonest">Soonest first</option>
+              <option value="latest">Latest first</option>
+              <option value="title">Event name A–Z</option>
+            </select>
+          </label>
+        </div>
+      </div>
       {error ? (
         <div role="alert" className="panel">
           <p>{error}</p>

@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time
 from typing import Annotated, Literal
 from uuid import UUID
 
@@ -44,6 +44,7 @@ def list_events(
     status: Literal["PUBLISHED", "GROUPS_PROPOSED", "GROUPS_FINALIZED"] | None = None,
     date_from: date | None = None,
     date_to: date | None = None,
+    sort: Literal["soonest", "latest", "title"] = "soonest",
 ) -> EventPage:
     if date_from and date_to and date_from > date_to:
         raise HTTPException(422, "Start date must not be after end date")
@@ -55,11 +56,16 @@ def list_events(
     if date_from:
         query = query.where(Event.start_at >= datetime.combine(date_from, time.min, UTC))
     if date_to:
-        query = query.where(
-            Event.start_at < datetime.combine(date_to + timedelta(days=1), time.min, UTC)
-        )
+        query = query.where(Event.start_at <= datetime.combine(date_to, time.max, UTC))
     total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
-    events = db.scalars(query.order_by(Event.start_at, Event.id).offset(offset).limit(limit)).all()
+    order = (
+        Event.start_at.desc()
+        if sort == "latest"
+        else func.lower(Event.title).asc()
+        if sort == "title"
+        else Event.start_at.asc()
+    )
+    events = db.scalars(query.order_by(order, Event.id).offset(offset).limit(limit)).all()
     return EventPage(
         items=[EventOut.model_validate(item) for item in events],
         total=total,
