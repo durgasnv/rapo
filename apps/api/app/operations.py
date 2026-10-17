@@ -127,7 +127,7 @@ def main() -> None:
                     "Also test a password reset from the hosted site.",
                 )
         elif args.command == "backup":
-            backup(config.database_url, args.file)
+            backup(config.migration_database_url, args.file)
         else:
             restore_check(config.database_url, args.file)
     except Exception:

@@ -17,10 +17,10 @@ References: [Vercel Services](https://vercel.com/docs/services),
 
 ## 1. Create the database
 
-Create a **Free** Neon project with PostgreSQL **16**, in a region close to the
-Vercel functions. You can connect Neon through Vercel Marketplace or create it in
-the Neon dashboard. Keep automatic scale-to-zero enabled. Do not select a paid
-plan or enable usage-based upgrades for this demo.
+Use the existing **Free** Neon project `shy-voice-66766417`, with PostgreSQL
+**18** in `aws-us-east-2`. Keep automatic scale-to-zero enabled. Do not select
+a paid plan or enable usage-based upgrades for this demo. If creating a separate
+project, choose a region close to the Vercel functions.
 
 Keep both connection URLs privately:
 
@@ -33,6 +33,62 @@ selects the installed psycopg 3 driver. Do not commit either URL or expose it in
 a `NEXT_PUBLIC_*` variable.
 
 ## 2. Prepare environment values and migrate
+
+### Neon CLI setup for this repository
+
+Install the CLI with `npm i -g neon@latest` (or use `npx neon@latest`), then
+run `neon login` yourself and finish the browser sign-in. The workspace uses:
+
+```bash
+neon init -y --org-id org-wispy-credit-53871014 --project-id shy-voice-66766417 --branch production --services postgres
+neon config plan
+neon deploy
+```
+
+`neon.ts` declares a Postgres-only policy. The initializer installs the Neon
+agent plugin, including its OAuth MCP server; authorize that connection in your
+agent when prompted. CLI login and MCP authorization are separate. Neither
+requires putting an API key into repository files.
+
+The CLI updates the existing ignored root `.env`, preserving the Docker values.
+The API and worker accept its `DATABASE_URL` (pooled); Alembic and backups prefer
+`DATABASE_URL_UNPOOLED` (direct). Existing `RAPO_DATABASE_URL` and
+`RAPO_MIGRATION_DATABASE_URL` settings take precedence over the corresponding
+Neon variables. Do not combine the local `apps/api/.env` with the Neon file:
+its local database override would select Docker instead.
+
+For a local API connected to the linked Neon branch:
+
+Set `NEXT_PUBLIC_API_URL=/api` in the ignored `apps/web/.env.local` before
+building. An old absolute localhost API URL is embedded in the build and can
+break session cookies when the browser uses `127.0.0.1` instead.
+
+```bash
+uv run --env-file .env alembic upgrade head
+uv run --env-file .env alembic check
+uv run --env-file .env uvicorn app.main:app --app-dir apps/api --host 127.0.0.1 --port 8000
+# In a second terminal, after npm run build:
+npm run start
+```
+
+Migration commands change the linked database: review migrations and test them
+on an isolated branch first. Building the frontend never migrates the database.
+For Vercel, copy the pooled URL privately into `DATABASE_URL` (or
+`RAPO_DATABASE_URL`) in Production settings and redeploy manually. Pulling the
+local file does not update Vercel or GitHub Actions secrets. Keep the direct URL
+in the release/migration environment, rather than the frontend browser bundle.
+
+This database starts empty; local Docker accounts are not copied automatically.
+Create your account on the deployed site, then grant it organizer access using
+the linked production environment:
+
+```bash
+PYTHONPATH=apps/api uv run --env-file .env python -m app.cli YOUR-ACCOUNT-EMAIL
+```
+
+Refresh the website afterward to load the organizer role.
+
+### Production security settings
 
 Use [api.env.production.example](api.env.production.example) as the template for
 an ignored local `apps/api/.env.production`. Replace the database URL with the
@@ -151,7 +207,9 @@ visibility merely to enable a schedule without reviewing what would become publi
 ## 6. Restore rehearsal
 
 Neon Free currently provides a short restore-history window; it does not replace
-independent backups. Use PostgreSQL 16 tools for the PostgreSQL 16 database.
+independent backups. Use PostgreSQL 18 dump/restore tools for this PostgreSQL 18 database.
+The backup workflow installs that client using the
+[official PostgreSQL Apt repository](https://www.postgresql.org/download/linux/ubuntu/).
 To create a local backup, first make an ignored directory:
 
 ```bash

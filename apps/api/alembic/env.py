@@ -5,7 +5,7 @@ from app.db import Base, make_engine
 
 if context.is_offline_mode():
     context.configure(
-        url=Settings().database_url,
+        url=Settings().migration_database_url,
         target_metadata=Base.metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -21,7 +21,7 @@ elif context.config.attributes.get("connection") is not None:
     with context.begin_transaction():
         context.run_migrations()
 else:
-    engine = make_engine(Settings().database_url)
+    engine = make_engine(Settings().migration_database_url)
     with engine.connect() as connection:
         context.configure(connection=connection, target_metadata=Base.metadata, compare_type=True)
         with context.begin_transaction():

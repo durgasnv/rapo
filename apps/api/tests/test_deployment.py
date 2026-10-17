@@ -9,6 +9,7 @@ from sqlalchemy.exc import OperationalError
 from app.core.config import Settings
 from app.main import create_app
 from app.operations import backup, libpq_environment, restore_check
+from app.operations import main as operations_main
 
 
 def production(**overrides):
@@ -28,6 +29,48 @@ def test_provider_database_urls_keep_credentials_and_options(prefix):
     assert config.database_url == (
         "postgresql+psycopg://user:encoded%40password@private-db/rapo?sslmode=require"
     )
+
+
+def test_neon_environment_separates_runtime_and_migrations(monkeypatch):
+    monkeypatch.delenv("RAPO_DATABASE_URL", raising=False)
+    monkeypatch.delenv("RAPO_MIGRATION_DATABASE_URL", raising=False)
+    monkeypatch.setenv("DATABASE_URL", "postgresql://user@pooled/rapo?sslmode=require")
+    monkeypatch.setenv("DATABASE_URL_UNPOOLED", "postgresql://user@direct/rapo?sslmode=require")
+    config = Settings()
+    assert config.database_url == "postgresql+psycopg://user@pooled/rapo?sslmode=require"
+    assert config.migration_database_url == "postgresql+psycopg://user@direct/rapo?sslmode=require"
+
+
+def test_explicit_rapo_environment_takes_precedence_over_neon(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "postgresql://user@neon-pool/rapo")
+    monkeypatch.setenv("DATABASE_URL_UNPOOLED", "postgresql://user@neon-direct/rapo")
+    monkeypatch.setenv("RAPO_DATABASE_URL", "postgresql://user@custom-pool/rapo")
+    monkeypatch.setenv("RAPO_MIGRATION_DATABASE_URL", "postgresql://user@custom-direct/rapo")
+    config = Settings()
+    assert config.database_url == "postgresql+psycopg://user@custom-pool/rapo"
+    assert config.migration_database_url == "postgresql+psycopg://user@custom-direct/rapo"
+
+
+def test_migrations_fall_back_to_runtime_database(monkeypatch):
+    monkeypatch.delenv("RAPO_MIGRATION_DATABASE_URL", raising=False)
+    monkeypatch.delenv("DATABASE_URL_UNPOOLED", raising=False)
+    config = Settings(database_url="postgresql://user@local/rapo")
+    assert config.migration_database_url == config.database_url
+
+
+def test_backup_command_uses_direct_database(tmp_path, monkeypatch):
+    config = Settings(
+        database_url="postgresql://user@pool/rapo",
+        database_url_unpooled="postgresql://user@direct/rapo",
+    )
+    destination = tmp_path / "backup.dump"
+    monkeypatch.setattr("sys.argv", ["operations", "backup", str(destination)])
+    with (
+        patch("app.operations.Settings", return_value=config),
+        patch("app.operations.backup") as run,
+    ):
+        operations_main()
+    run.assert_called_once_with(config.migration_database_url, destination)
 
 
 @pytest.mark.parametrize(

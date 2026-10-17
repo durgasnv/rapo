@@ -22,3 +22,4 @@ test-results/
 backups/
 *.dump
 *.dump.enc
+.neon

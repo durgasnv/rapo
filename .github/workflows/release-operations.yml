@@ -35,6 +35,28 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --frozen --no-dev
+      - name: Install PostgreSQL 18 backup client
+        if: github.event_name == 'schedule' || inputs.operation == 'backup'
+        run: |
+          set -euo pipefail
+          if [ ! -x /usr/lib/postgresql/18/bin/pg_dump ]; then
+            sudo apt-get update
+            if ! apt-cache show postgresql-client-18 > /dev/null 2>&1; then
+              sudo install -d /usr/share/postgresql-common/pgdg
+              sudo curl --fail --silent --show-error \
+                -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+                https://www.postgresql.org/media/keys/ACCC4CF8.asc
+              . /etc/os-release
+              printf '%s\n' 'Types: deb' 'URIs: https://apt.postgresql.org/pub/repos/apt' \
+                "Suites: ${VERSION_CODENAME}-pgdg" 'Components: main' \
+                'Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc' \
+                | sudo tee /etc/apt/sources.list.d/rapo-pgdg.sources > /dev/null
+              sudo apt-get update
+            fi
+            sudo apt-get install --yes postgresql-client-18
+          fi
+          /usr/lib/postgresql/18/bin/pg_dump --version
+          echo '/usr/lib/postgresql/18/bin' >> "$GITHUB_PATH"
       - name: Run selected operation
         run: |
           set -euo pipefail
