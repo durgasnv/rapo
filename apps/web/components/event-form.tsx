@@ -38,7 +38,15 @@ export function EventForm({
     };
     for (const [key] of dates) {
       const value = String(form.get(key) || "");
-      body[key] = value ? new Date(`${value}Z`).toISOString() : null;
+      const timestamp = value ? new Date(`${value}Z`) : null;
+      // JavaScript dates have millisecond precision; retain the API's original
+      // timestamp (including microseconds) when this input has not changed.
+      body[key] =
+        timestamp &&
+        initial &&
+        timestamp.getTime() === new Date(initial[key]).getTime()
+          ? initial[key]
+          : (timestamp?.toISOString() ?? null);
     }
     setError("");
     setBusy(true);
@@ -104,10 +112,11 @@ export function EventForm({
             {title} (UTC)
             <input
               type="datetime-local"
+              step="any"
               name={key}
               required={key !== "grouping_at"}
               defaultValue={
-                initial ? new Date(initial[key]).toISOString().slice(0, 16) : ""
+                initial ? new Date(initial[key]).toISOString().slice(0, -1) : ""
               }
             />
           </label>
