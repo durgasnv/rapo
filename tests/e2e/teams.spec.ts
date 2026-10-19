@@ -538,6 +538,7 @@ with Session(make_engine(url)) as db:
     const bob = await bobContext.newPage();
     await bob.goto("/dashboard");
     await bob
+      .getByRole("region", { name: "Your registrations", exact: true })
       .getByRole("link", { name: "Lifecycle browser workshop", exact: true })
       .click();
     await bob.waitForURL(`**/events/${event.id}`, { timeout: 60_000 });
