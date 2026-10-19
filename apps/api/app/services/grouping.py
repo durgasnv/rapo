@@ -215,8 +215,10 @@ def read(db: Session, event_id: UUID, organizer: User, run_id: UUID | None) -> G
     query = select(GroupingRun).where(GroupingRun.event_id == event.id)
     if run_id is not None:
         query = query.where(GroupingRun.id == run_id)
-    elif event.status == "GROUPS_FINALIZED":
-        query = query.where(GroupingRun.status == "FINALIZED")
+    elif event.status in {"GROUPS_FINALIZED", "IN_PROGRESS", "COMPLETED", "CANCELLED"}:
+        # Preserve the approved preview after completion/cancellation, while
+        # retaining proposals for events cancelled before any finalization.
+        query = query.order_by((GroupingRun.status == "FINALIZED").desc())
     run = db.scalar(query.order_by(GroupingRun.created_at.desc(), GroupingRun.id.desc()).limit(1))
     if run is None:
         if run_id is not None:

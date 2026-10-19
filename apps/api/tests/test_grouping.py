@@ -123,6 +123,36 @@ def create(client: TestClient, event: Event, **overrides):
     )
 
 
+@pytest.mark.parametrize("status", ["GROUPS_FINALIZED", "IN_PROGRESS", "COMPLETED", "CANCELLED"])
+def test_latest_keeps_approved_run_after_lifecycle_transition(client, db, grouping_event, status):
+    event, _ = grouping_event
+    approved = create(client, event).json()
+    newer = create(client, event, seed=43).json()
+    version = client.get(f"/organizer/events/{event.id}").json()["version"]
+    response = client.post(
+        f"/events/{event.id}/grouping-runs/{approved['id']}/finalize",
+        json={"version": version},
+    )
+    assert response.status_code == 200, response.text
+    db.refresh(event)
+    event.status = status
+    db.commit()
+    latest = client.get(f"/events/{event.id}/grouping-runs/latest")
+    assert latest.status_code == 200, latest.text
+    assert latest.json()["id"] == approved["id"]
+    assert latest.json()["status"] == "FINALIZED"
+    # Explicit history reads must still expose the other proposal.
+    assert client.get(f"/events/{event.id}/grouping-runs/{newer['id']}").json()["id"] == newer["id"]
+
+
+def test_cancelled_event_without_finalization_keeps_latest_proposal(client, db, grouping_event):
+    event, _ = grouping_event
+    proposed = create(client, event).json()
+    version = client.get(f"/organizer/events/{event.id}").json()["version"]
+    assert client.post(f"/events/{event.id}/cancel", json={"version": version}).status_code == 200
+    assert client.get(f"/events/{event.id}/grouping-runs/latest").json()["id"] == proposed["id"]
+
+
 def test_preview_history_eligibility_persistence_and_retry(client, db, grouping_event):
     event, users = grouping_event
     history_event(db, event, users[:6])
