@@ -35,8 +35,9 @@ test("event activity read recovery, pagination, and refresh after an event trans
   }));
   let fail = true;
   const unexpected: string[] = [];
-  await page.route("http://127.0.0.1:8000/**", async (route) => {
+  await page.route("**/api/**", async (route) => {
     const url = new URL(route.request().url());
+    url.pathname = url.pathname.slice("/api".length);
     if (url.pathname === "/me")
       return route.fulfill({
         json: {

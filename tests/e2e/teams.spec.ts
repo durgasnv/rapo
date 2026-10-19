@@ -220,7 +220,7 @@ with Session(make_engine(url)) as db:
     await organizer.waitForURL(`**/organizer/events/${event.id}`, {
       timeout: 60_000,
     });
-    const eventDetailsUrl = `http://127.0.0.1:8000/organizer/events/${event.id}`;
+    const eventDetailsUrl = `**/api/organizer/events/${event.id}`;
     const failRefresh = async (route: import("@playwright/test").Route) =>
       route.fulfill({
         status: 503,
