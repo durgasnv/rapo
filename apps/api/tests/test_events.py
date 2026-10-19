@@ -38,6 +38,22 @@ def make_organizer(client: TestClient, db: Session, email: str = "owner@example.
     db.commit()
 
 
+def test_automatic_grouping_schedule_near_datetime_lower_bound(client, db):
+    make_organizer(client, db)
+    body = event_body() | {
+        "registration_opens_at": "0001-01-01T00:00:00Z",
+        "registration_closes_at": "0001-01-01T12:00:00Z",
+        "start_at": "0001-01-02T12:00:00Z",
+        "end_at": "0001-01-03T12:00:00Z",
+        "confirmation_deadline": "0001-01-02T00:00:00Z",
+    }
+    response = client.post("/events", json=body)
+    assert response.status_code == 201, response.text
+    assert datetime.fromisoformat(response.json()["grouping_at"]) == datetime(
+        1, 1, 1, 12, tzinfo=UTC
+    )
+
+
 def test_full_event_lifecycle_and_audit(client: TestClient, db: Session) -> None:
     make_organizer(client, db)
     response = client.post("/events", json=event_body())

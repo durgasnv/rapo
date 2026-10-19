@@ -45,7 +45,10 @@ class EventInput(BaseModel):
         ):
             raise ValueError("Required order: registration opens < closes <= event start < end")
         if self.grouping_at is None:
-            self.grouping_at = max(self.start_at - timedelta(days=3), self.registration_closes_at)
+            # Clamp the interval before subtracting so valid early dates cannot
+            # underflow datetime's lower bound.
+            lead_time = min(timedelta(days=3), self.start_at - self.registration_closes_at)
+            self.grouping_at = self.start_at - lead_time
         if (
             not self.registration_closes_at
             <= self.grouping_at
