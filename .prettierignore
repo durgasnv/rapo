@@ -10,3 +10,5 @@ docs/1100_plan.md
 docs/AGENTS.md
 playwright-report
 test-results
+# Installed third-party skills retain their upstream formatting.
+.agents/skills
