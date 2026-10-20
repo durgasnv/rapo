@@ -82,6 +82,14 @@ or decline. The final roster provides vacancy repair, deadline extensions,
 validated reassignment, and CSV export.
 See [grouping previews](docs/features/grouping-preview.md) for the full flow and limits.
 
+## Connect the college dataset
+
+Import `demo/dataset_college.json` into the local database using the trusted
+`app.import_college` command. This adds seven events, 77 synthetic participants,
+registrations, finalized teams, and completed collaboration history under your
+existing organizer. See [college dataset setup](docs/features/college-dataset.md)
+for commands, demo logins, date handling, and repeat-import safety.
+
 ## Try a 120-member demo
 
 Create synthetic members and events under your existing organizer account:
