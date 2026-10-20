@@ -18,7 +18,10 @@ export function GroupingSchedule({ event }: { event: EventData }) {
     let active = true;
     apiRequest<Job>(`/events/${event.id}/grouping-job`)
       .then((result) => {
-        if (active) setJob(result);
+        if (active) {
+          setJob(result);
+          setError("");
+        }
       })
       .catch((failure: unknown) => {
         if (active)

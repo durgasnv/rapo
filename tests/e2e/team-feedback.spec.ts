@@ -57,8 +57,8 @@ for (const outcome of ["READY", "NEEDS_ATTENTION", "RETRY"] as const) {
     };
     const writes: Record<string, unknown>[] = [];
     const unexpected: string[] = [];
-    await page.route("http://127.0.0.1:8000/**", async (route) => {
-      const path = new URL(route.request().url()).pathname;
+    await page.route("**/api/**", async (route) => {
+      const path = new URL(route.request().url()).pathname.slice("/api".length);
       if (path === "/me")
         return route.fulfill({
           json: {

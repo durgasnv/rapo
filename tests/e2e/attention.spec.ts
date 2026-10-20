@@ -18,8 +18,9 @@ test("attention pagination, refresh, and recovery from a failed read", async ({
     ],
   }));
   const unexpected: string[] = [];
-  await page.route("http://127.0.0.1:8000/**", async (route) => {
+  await page.route("**/api/**", async (route) => {
     const url = new URL(route.request().url());
+    url.pathname = url.pathname.slice("/api".length);
     if (url.pathname === "/me")
       return route.fulfill({
         json: {
