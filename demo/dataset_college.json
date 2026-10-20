@@ -1,0 +1,2181 @@
+{
+  "_comment": "Rapo college dataset — Greenfield University students and faculty, realistic academic-year events.",
+  "_generated": "2026-10-19",
+  "_college": "Greenfield University (GFU) — semester: Autumn 2026",
+
+  "members": [
+    {
+      "id": 1,
+      "name": "Dr. Ananya Krishnan",
+      "email": "a.krishnan@gfu.edu",
+      "role": "organizer",
+      "dept": "Computer Science",
+      "year": "faculty"
+    },
+    {
+      "id": 2,
+      "name": "Prof. Samuel Osei",
+      "email": "s.osei@gfu.edu",
+      "role": "organizer",
+      "dept": "Student Affairs",
+      "year": "faculty"
+    },
+    {
+      "id": 3,
+      "name": "Prof. Laura Becker",
+      "email": "l.becker@gfu.edu",
+      "role": "organizer",
+      "dept": "Electrical Engineering",
+      "year": "faculty"
+    },
+    {
+      "id": 4,
+      "name": "Arjun Mehta",
+      "email": "arjun.mehta@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "3rd year"
+    },
+    {
+      "id": 5,
+      "name": "Chloe Dubois",
+      "email": "chloe.dubois@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "2nd year"
+    },
+    {
+      "id": 6,
+      "name": "Ravi Shankar",
+      "email": "ravi.shankar@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "4th year"
+    },
+    {
+      "id": 7,
+      "name": "Amina Yusuf",
+      "email": "amina.yusuf@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 8,
+      "name": "Tobias Keller",
+      "email": "tobias.keller@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 9,
+      "name": "Pooja Iyer",
+      "email": "pooja.iyer@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "1st year"
+    },
+    {
+      "id": 10,
+      "name": "Marcus Webb",
+      "email": "marcus.webb@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "3rd year"
+    },
+    {
+      "id": 11,
+      "name": "Fatima Al-Rashid",
+      "email": "fatima.alrashid@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 12,
+      "name": "Leon Müller",
+      "email": "leon.muller@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 13,
+      "name": "Yuki Tanaka",
+      "email": "yuki.tanaka@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "3rd year"
+    },
+    {
+      "id": 14,
+      "name": "Gabriela Vargas",
+      "email": "gabriela.vargas@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "4th year"
+    },
+    {
+      "id": 15,
+      "name": "Kwame Asante",
+      "email": "kwame.asante@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "1st year"
+    },
+    {
+      "id": 16,
+      "name": "Sara Lindström",
+      "email": "sara.lindstrom@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 17,
+      "name": "Nikhil Joshi",
+      "email": "nikhil.joshi@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 18,
+      "name": "Elena Popescu",
+      "email": "elena.popescu@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "4th year"
+    },
+    {
+      "id": 19,
+      "name": "James O'Sullivan",
+      "email": "james.osullivan@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 20,
+      "name": "Nadia Hassan",
+      "email": "nadia.hassan@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 21,
+      "name": "Chen Wei",
+      "email": "chen.wei@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "1st year"
+    },
+    {
+      "id": 22,
+      "name": "Isabella Costa",
+      "email": "isabella.costa@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "2nd year"
+    },
+    {
+      "id": 23,
+      "name": "Samuel Okafor",
+      "email": "samuel.okafor@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "3rd year"
+    },
+    {
+      "id": 24,
+      "name": "Priya Nambiar",
+      "email": "priya.nambiar@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "4th year"
+    },
+    {
+      "id": 25,
+      "name": "Daniel Park",
+      "email": "daniel.park@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "1st year"
+    },
+    {
+      "id": 26,
+      "name": "Hana Novák",
+      "email": "hana.novak@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 27,
+      "name": "Ethan Brooks",
+      "email": "ethan.brooks@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "3rd year"
+    },
+    {
+      "id": 28,
+      "name": "Layla Al-Mansoori",
+      "email": "layla.almansoori@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 29,
+      "name": "Sebastián Ramos",
+      "email": "sebastian.ramos@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 30,
+      "name": "Mei Lin",
+      "email": "mei.lin@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "3rd year"
+    },
+    {
+      "id": 31,
+      "name": "Dmitri Sokolov",
+      "email": "dmitri.sokolov@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "1st year"
+    },
+    {
+      "id": 32,
+      "name": "Afia Mensah",
+      "email": "afia.mensah@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 33,
+      "name": "Tom Fitzgerald",
+      "email": "tom.fitzgerald@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 34,
+      "name": "Sunita Rao",
+      "email": "sunita.rao@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "4th year"
+    },
+    {
+      "id": 35,
+      "name": "Björn Lindqvist",
+      "email": "bjorn.lindqvist@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 36,
+      "name": "Chioma Nwosu",
+      "email": "chioma.nwosu@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 37,
+      "name": "Alex Kim",
+      "email": "alex.kim@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "1st year"
+    },
+    {
+      "id": 38,
+      "name": "Valentina Rossi",
+      "email": "valentina.rossi@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "4th year"
+    },
+    {
+      "id": 39,
+      "name": "Tariq Farouk",
+      "email": "tariq.farouk@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 40,
+      "name": "Anya Petrov",
+      "email": "anya.petrov@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "3rd year"
+    },
+    {
+      "id": 41,
+      "name": "David Osei",
+      "email": "david.osei@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "4th year"
+    },
+    {
+      "id": 42,
+      "name": "Camille Fontaine",
+      "email": "camille.fontaine@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "1st year"
+    },
+    {
+      "id": 43,
+      "name": "Rohan Gupta",
+      "email": "rohan.gupta@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 44,
+      "name": "Seo-Yeon Park",
+      "email": "seoyeon.park@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 45,
+      "name": "Nkechi Adeyemi",
+      "email": "nkechi.adeyemi@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 46,
+      "name": "Hugo Bernard",
+      "email": "hugo.bernard@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 47,
+      "name": "Aigerim Bekova",
+      "email": "aigerim.bekova@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "1st year"
+    },
+    {
+      "id": 48,
+      "name": "Luca Ricci",
+      "email": "luca.ricci@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 49,
+      "name": "Yara Al-Amin",
+      "email": "yara.alamin@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "2nd year"
+    },
+    {
+      "id": 50,
+      "name": "Jin-Ho Kwon",
+      "email": "jinho.kwon@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "4th year"
+    },
+    {
+      "id": 51,
+      "name": "Adaeze Okeke",
+      "email": "adaeze.okeke@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "3rd year"
+    },
+    {
+      "id": 52,
+      "name": "Viktor Holst",
+      "email": "viktor.holst@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "1st year"
+    },
+    {
+      "id": 53,
+      "name": "Anika Singh",
+      "email": "anika.singh@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 54,
+      "name": "Carlos Pinto",
+      "email": "carlos.pinto@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 55,
+      "name": "Mia Larsen",
+      "email": "mia.larsen@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "4th year"
+    },
+    {
+      "id": 56,
+      "name": "Kwabena Boateng",
+      "email": "kwabena.boateng@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 57,
+      "name": "Sophie Maier",
+      "email": "sophie.maier@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "1st year"
+    },
+    {
+      "id": 58,
+      "name": "Reza Tehrani",
+      "email": "reza.tehrani@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 59,
+      "name": "Amara Diallo",
+      "email": "amara.diallo@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 60,
+      "name": "Noah Mitchell",
+      "email": "noah.mitchell@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 61,
+      "name": "Sakura Yamamoto",
+      "email": "sakura.yamamoto@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "1st year"
+    },
+    {
+      "id": 62,
+      "name": "Felix Wagner",
+      "email": "felix.wagner@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 63,
+      "name": "Leila Nazari",
+      "email": "leila.nazari@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "2nd year"
+    },
+    {
+      "id": 64,
+      "name": "Emeka Chukwu",
+      "email": "emeka.chukwu@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "4th year"
+    },
+    {
+      "id": 65,
+      "name": "Ana Pereira",
+      "email": "ana.pereira@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "3rd year"
+    },
+    {
+      "id": 66,
+      "name": "Sven Eriksson",
+      "email": "sven.eriksson@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "1st year"
+    },
+    {
+      "id": 67,
+      "name": "Diya Kapoor",
+      "email": "diya.kapoor@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 68,
+      "name": "Mahmoud Khalil",
+      "email": "mahmoud.khalil@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 69,
+      "name": "Ingrid Holm",
+      "email": "ingrid.holm@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 70,
+      "name": "Tae-Yang Oh",
+      "email": "taeyang.oh@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "2nd year"
+    },
+    {
+      "id": 71,
+      "name": "Miriam Obi",
+      "email": "miriam.obi@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "1st year"
+    },
+    {
+      "id": 72,
+      "name": "Pedro Alves",
+      "email": "pedro.alves@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mathematics",
+      "year": "3rd year"
+    },
+    {
+      "id": 73,
+      "name": "Zara Ahmed",
+      "email": "zara.ahmed@student.gfu.edu",
+      "role": "participant",
+      "dept": "Design",
+      "year": "2nd year"
+    },
+    {
+      "id": 74,
+      "name": "Kofi Mensah",
+      "email": "kofi.mensah@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "4th year"
+    },
+    {
+      "id": 75,
+      "name": "Anastasia Volkov",
+      "email": "anastasia.volkov@student.gfu.edu",
+      "role": "participant",
+      "dept": "Data Science",
+      "year": "1st year"
+    },
+    {
+      "id": 76,
+      "name": "Omar Shaikh",
+      "email": "omar.shaikh@student.gfu.edu",
+      "role": "participant",
+      "dept": "Mechanical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 77,
+      "name": "Nina Johansson",
+      "email": "nina.johansson@student.gfu.edu",
+      "role": "participant",
+      "dept": "Civil Engineering",
+      "year": "2nd year"
+    },
+    {
+      "id": 78,
+      "name": "Kiran Reddy",
+      "email": "kiran.reddy@student.gfu.edu",
+      "role": "participant",
+      "dept": "Electrical Engineering",
+      "year": "4th year"
+    },
+    {
+      "id": 79,
+      "name": "Giulia Ferrari",
+      "email": "giulia.ferrari@student.gfu.edu",
+      "role": "participant",
+      "dept": "Biomedical Engineering",
+      "year": "3rd year"
+    },
+    {
+      "id": 80,
+      "name": "Olusegun Bello",
+      "email": "olusegun.bello@student.gfu.edu",
+      "role": "participant",
+      "dept": "Computer Science",
+      "year": "1st year"
+    }
+  ],
+
+  "events": [
+    {
+      "id": "gfu-001",
+      "organizer_id": 2,
+      "title": "Freshers' Orientation — Team Ice-Breakers",
+      "description": "Welcome to Greenfield University! New students are grouped into small mixed-department teams for a structured half-day of campus tours, icebreaker challenges, and introductions to student clubs. Teams stay together for the afternoon social.",
+      "location": "GFU Main Quad & Student Union, Building A",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-08-03T09:00:00+05:30",
+      "end_at": "2026-08-03T15:00:00+05:30",
+      "registration_opens_at": "2026-07-15T09:00:00+05:30",
+      "registration_closes_at": "2026-07-31T23:59:00+05:30",
+      "grouping_at": "2026-08-01T08:00:00+05:30",
+      "confirmation_deadline": "2026-08-02T18:00:00+05:30",
+      "capacity": 60,
+      "min_team_size": 4,
+      "max_team_size": 5,
+      "status": "COMPLETED",
+      "version": 4,
+      "registered_count": 20,
+      "waitlisted_count": 0
+    },
+    {
+      "id": "gfu-002",
+      "organizer_id": 1,
+      "title": "IntraCollege Hackathon — Autumn 2026",
+      "description": "48-hour hackathon for all GFU students. Build something real: a web app, ML model, hardware prototype, or open-source tool. Teams are formed across departments — every team must include at least one CS and one non-CS student. Top 3 teams get lab credits and intern referrals.",
+      "location": "CS Block, Lab Wing 3 (Rooms 301–310)",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-09-19T18:00:00+05:30",
+      "end_at": "2026-09-21T18:00:00+05:30",
+      "registration_opens_at": "2026-08-25T09:00:00+05:30",
+      "registration_closes_at": "2026-09-14T23:59:00+05:30",
+      "grouping_at": "2026-09-15T08:00:00+05:30",
+      "confirmation_deadline": "2026-09-17T23:59:00+05:30",
+      "capacity": 60,
+      "min_team_size": 4,
+      "max_team_size": 5,
+      "status": "COMPLETED",
+      "version": 5,
+      "registered_count": 60,
+      "waitlisted_count": 8
+    },
+    {
+      "id": "gfu-003",
+      "organizer_id": 3,
+      "title": "IEEE Circuit Design Challenge",
+      "description": "Annual circuit design and prototyping competition run by the GFU IEEE Student Chapter. Teams design, simulate, and physically build a working circuit to meet a given spec — this year: low-power IoT sensor node. Oscilloscopes, PCB mills, and component kits provided.",
+      "location": "EE Department, Electronics Lab (Room EE-104)",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-10-11T10:00:00+05:30",
+      "end_at": "2026-10-11T18:00:00+05:30",
+      "registration_opens_at": "2026-09-20T09:00:00+05:30",
+      "registration_closes_at": "2026-10-05T23:59:00+05:30",
+      "grouping_at": "2026-10-06T08:00:00+05:30",
+      "confirmation_deadline": "2026-10-09T23:59:00+05:30",
+      "capacity": 28,
+      "min_team_size": 3,
+      "max_team_size": 4,
+      "status": "GROUPS_FINALIZED",
+      "version": 3,
+      "registered_count": 28,
+      "waitlisted_count": 4
+    },
+    {
+      "id": "gfu-004",
+      "organizer_id": 1,
+      "title": "AI Research Reading Group — Autumn Sprint",
+      "description": "Six-week peer reading group: students team up to study, present, and critically discuss a set of landmark AI/ML papers (transformers, diffusion models, RL foundations). Each team presents one paper and writes a group critique. Open to CS, Maths, and Data Science students.",
+      "location": "CS Seminar Room 204",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-10-27T17:00:00+05:30",
+      "end_at": "2026-12-01T19:00:00+05:30",
+      "registration_opens_at": "2026-10-01T09:00:00+05:30",
+      "registration_closes_at": "2026-10-22T23:59:00+05:30",
+      "grouping_at": "2026-10-23T08:00:00+05:30",
+      "confirmation_deadline": "2026-10-25T23:59:00+05:30",
+      "capacity": 30,
+      "min_team_size": 3,
+      "max_team_size": 4,
+      "status": "PUBLISHED",
+      "version": 2,
+      "registered_count": 24,
+      "waitlisted_count": 0
+    },
+    {
+      "id": "gfu-005",
+      "organizer_id": 2,
+      "title": "Intercollege Cultural Fest — GFU Ensemble",
+      "description": "GFU's flagship cultural event. Students form performing arts ensembles across departments — music, dance, drama, spoken word. Each ensemble rehearses for three weeks and performs on fest night. All genres welcome; no prior experience required.",
+      "location": "GFU Open-Air Amphitheatre",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-11-22T17:00:00+05:30",
+      "end_at": "2026-11-22T22:00:00+05:30",
+      "registration_opens_at": "2026-10-15T09:00:00+05:30",
+      "registration_closes_at": "2026-11-05T23:59:00+05:30",
+      "grouping_at": "2026-11-06T08:00:00+05:30",
+      "confirmation_deadline": "2026-11-10T23:59:00+05:30",
+      "capacity": 60,
+      "min_team_size": 4,
+      "max_team_size": 6,
+      "status": "PUBLISHED",
+      "version": 1,
+      "registered_count": 41,
+      "waitlisted_count": 0
+    },
+    {
+      "id": "gfu-006",
+      "organizer_id": 3,
+      "title": "Final Year Capstone Project Expo",
+      "description": "4th-year students present their capstone projects to a panel of faculty and industry guests. Students are grouped into presentation slots by project theme. Each slot has 4 teams who present back-to-back and cross-evaluate each other's work.",
+      "location": "GFU Exhibition Hall, Block D",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-11-29T09:00:00+05:30",
+      "end_at": "2026-11-29T17:00:00+05:30",
+      "registration_opens_at": "2026-10-20T09:00:00+05:30",
+      "registration_closes_at": "2026-11-15T23:59:00+05:30",
+      "grouping_at": "2026-11-16T08:00:00+05:30",
+      "confirmation_deadline": "2026-11-20T23:59:00+05:30",
+      "capacity": 40,
+      "min_team_size": 3,
+      "max_team_size": 4,
+      "status": "DRAFT",
+      "version": 1,
+      "registered_count": 0,
+      "waitlisted_count": 0
+    },
+    {
+      "id": "gfu-007",
+      "organizer_id": 2,
+      "title": "Sports Day — Team Events",
+      "description": "Annual GFU Sports Day. Students register as individuals and are grouped into mixed-department teams for relay races, tug-of-war, cricket, and football. Teams are balanced by department and year to keep things fair and fun.",
+      "location": "GFU Sports Complex & Ground",
+      "timezone": "Asia/Kolkata",
+      "start_at": "2026-12-06T08:00:00+05:30",
+      "end_at": "2026-12-06T17:00:00+05:30",
+      "registration_opens_at": "2026-11-10T09:00:00+05:30",
+      "registration_closes_at": "2026-11-30T23:59:00+05:30",
+      "grouping_at": "2026-12-01T08:00:00+05:30",
+      "confirmation_deadline": "2026-12-04T23:59:00+05:30",
+      "capacity": null,
+      "min_team_size": 5,
+      "max_team_size": 6,
+      "status": "DRAFT",
+      "version": 1,
+      "registered_count": 0,
+      "waitlisted_count": 0
+    }
+  ],
+
+  "registrations": [
+    {
+      "event_id": "gfu-001",
+      "member_id": 9,
+      "status": "REGISTERED",
+      "queue_number": 1
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 15,
+      "status": "REGISTERED",
+      "queue_number": 2
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 21,
+      "status": "REGISTERED",
+      "queue_number": 3
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 25,
+      "status": "REGISTERED",
+      "queue_number": 4
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 31,
+      "status": "REGISTERED",
+      "queue_number": 5
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 37,
+      "status": "REGISTERED",
+      "queue_number": 6
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 42,
+      "status": "REGISTERED",
+      "queue_number": 7
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 47,
+      "status": "REGISTERED",
+      "queue_number": 8
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 52,
+      "status": "REGISTERED",
+      "queue_number": 9
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 57,
+      "status": "REGISTERED",
+      "queue_number": 10
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 61,
+      "status": "REGISTERED",
+      "queue_number": 11
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 66,
+      "status": "REGISTERED",
+      "queue_number": 12
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 71,
+      "status": "REGISTERED",
+      "queue_number": 13
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 75,
+      "status": "REGISTERED",
+      "queue_number": 14
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 80,
+      "status": "REGISTERED",
+      "queue_number": 15
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 12,
+      "status": "REGISTERED",
+      "queue_number": 16
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 32,
+      "status": "REGISTERED",
+      "queue_number": 17
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 53,
+      "status": "REGISTERED",
+      "queue_number": 18
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 63,
+      "status": "REGISTERED",
+      "queue_number": 19
+    },
+    {
+      "event_id": "gfu-001",
+      "member_id": 73,
+      "status": "REGISTERED",
+      "queue_number": 20
+    },
+
+    {
+      "event_id": "gfu-002",
+      "member_id": 4,
+      "status": "REGISTERED",
+      "queue_number": 1
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 5,
+      "status": "REGISTERED",
+      "queue_number": 2
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 6,
+      "status": "REGISTERED",
+      "queue_number": 3
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 7,
+      "status": "REGISTERED",
+      "queue_number": 4
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 8,
+      "status": "REGISTERED",
+      "queue_number": 5
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 10,
+      "status": "REGISTERED",
+      "queue_number": 6
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 11,
+      "status": "REGISTERED",
+      "queue_number": 7
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 12,
+      "status": "REGISTERED",
+      "queue_number": 8
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 13,
+      "status": "REGISTERED",
+      "queue_number": 9
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 14,
+      "status": "REGISTERED",
+      "queue_number": 10
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 15,
+      "status": "REGISTERED",
+      "queue_number": 11
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 16,
+      "status": "REGISTERED",
+      "queue_number": 12
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 17,
+      "status": "REGISTERED",
+      "queue_number": 13
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 18,
+      "status": "REGISTERED",
+      "queue_number": 14
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 19,
+      "status": "REGISTERED",
+      "queue_number": 15
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 20,
+      "status": "REGISTERED",
+      "queue_number": 16
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 21,
+      "status": "REGISTERED",
+      "queue_number": 17
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 22,
+      "status": "REGISTERED",
+      "queue_number": 18
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 23,
+      "status": "REGISTERED",
+      "queue_number": 19
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 24,
+      "status": "REGISTERED",
+      "queue_number": 20
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 25,
+      "status": "REGISTERED",
+      "queue_number": 21
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 26,
+      "status": "REGISTERED",
+      "queue_number": 22
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 27,
+      "status": "REGISTERED",
+      "queue_number": 23
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 28,
+      "status": "REGISTERED",
+      "queue_number": 24
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 29,
+      "status": "REGISTERED",
+      "queue_number": 25
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 30,
+      "status": "REGISTERED",
+      "queue_number": 26
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 31,
+      "status": "REGISTERED",
+      "queue_number": 27
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 32,
+      "status": "REGISTERED",
+      "queue_number": 28
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 33,
+      "status": "REGISTERED",
+      "queue_number": 29
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 34,
+      "status": "REGISTERED",
+      "queue_number": 30
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 35,
+      "status": "REGISTERED",
+      "queue_number": 31
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 36,
+      "status": "REGISTERED",
+      "queue_number": 32
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 37,
+      "status": "REGISTERED",
+      "queue_number": 33
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 38,
+      "status": "REGISTERED",
+      "queue_number": 34
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 39,
+      "status": "REGISTERED",
+      "queue_number": 35
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 40,
+      "status": "REGISTERED",
+      "queue_number": 36
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 41,
+      "status": "REGISTERED",
+      "queue_number": 37
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 42,
+      "status": "REGISTERED",
+      "queue_number": 38
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 43,
+      "status": "REGISTERED",
+      "queue_number": 39
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 44,
+      "status": "REGISTERED",
+      "queue_number": 40
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 45,
+      "status": "REGISTERED",
+      "queue_number": 41
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 46,
+      "status": "REGISTERED",
+      "queue_number": 42
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 47,
+      "status": "REGISTERED",
+      "queue_number": 43
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 48,
+      "status": "REGISTERED",
+      "queue_number": 44
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 49,
+      "status": "REGISTERED",
+      "queue_number": 45
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 50,
+      "status": "REGISTERED",
+      "queue_number": 46
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 51,
+      "status": "REGISTERED",
+      "queue_number": 47
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 52,
+      "status": "REGISTERED",
+      "queue_number": 48
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 53,
+      "status": "REGISTERED",
+      "queue_number": 49
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 54,
+      "status": "REGISTERED",
+      "queue_number": 50
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 55,
+      "status": "REGISTERED",
+      "queue_number": 51
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 56,
+      "status": "REGISTERED",
+      "queue_number": 52
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 57,
+      "status": "REGISTERED",
+      "queue_number": 53
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 58,
+      "status": "REGISTERED",
+      "queue_number": 54
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 59,
+      "status": "REGISTERED",
+      "queue_number": 55
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 60,
+      "status": "REGISTERED",
+      "queue_number": 56
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 61,
+      "status": "REGISTERED",
+      "queue_number": 57
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 62,
+      "status": "REGISTERED",
+      "queue_number": 58
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 63,
+      "status": "REGISTERED",
+      "queue_number": 59
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 64,
+      "status": "REGISTERED",
+      "queue_number": 60
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 65,
+      "status": "WAITLISTED",
+      "queue_number": 61
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 66,
+      "status": "WAITLISTED",
+      "queue_number": 62
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 67,
+      "status": "WAITLISTED",
+      "queue_number": 63
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 68,
+      "status": "WAITLISTED",
+      "queue_number": 64
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 69,
+      "status": "WAITLISTED",
+      "queue_number": 65
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 70,
+      "status": "WAITLISTED",
+      "queue_number": 66
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 71,
+      "status": "WAITLISTED",
+      "queue_number": 67
+    },
+    {
+      "event_id": "gfu-002",
+      "member_id": 72,
+      "status": "WAITLISTED",
+      "queue_number": 68
+    },
+
+    {
+      "event_id": "gfu-003",
+      "member_id": 17,
+      "status": "REGISTERED",
+      "queue_number": 1
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 25,
+      "status": "REGISTERED",
+      "queue_number": 2
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 35,
+      "status": "REGISTERED",
+      "queue_number": 3
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 43,
+      "status": "REGISTERED",
+      "queue_number": 4
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 52,
+      "status": "REGISTERED",
+      "queue_number": 5
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 60,
+      "status": "REGISTERED",
+      "queue_number": 6
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 68,
+      "status": "REGISTERED",
+      "queue_number": 7
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 78,
+      "status": "REGISTERED",
+      "queue_number": 8
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 8,
+      "status": "REGISTERED",
+      "queue_number": 9
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 20,
+      "status": "REGISTERED",
+      "queue_number": 10
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 36,
+      "status": "REGISTERED",
+      "queue_number": 11
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 45,
+      "status": "REGISTERED",
+      "queue_number": 12
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 53,
+      "status": "REGISTERED",
+      "queue_number": 13
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 61,
+      "status": "REGISTERED",
+      "queue_number": 14
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 71,
+      "status": "REGISTERED",
+      "queue_number": 15
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 79,
+      "status": "REGISTERED",
+      "queue_number": 16
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 11,
+      "status": "REGISTERED",
+      "queue_number": 17
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 26,
+      "status": "REGISTERED",
+      "queue_number": 18
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 33,
+      "status": "REGISTERED",
+      "queue_number": 19
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 44,
+      "status": "REGISTERED",
+      "queue_number": 20
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 54,
+      "status": "REGISTERED",
+      "queue_number": 21
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 62,
+      "status": "REGISTERED",
+      "queue_number": 22
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 69,
+      "status": "REGISTERED",
+      "queue_number": 23
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 77,
+      "status": "REGISTERED",
+      "queue_number": 24
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 13,
+      "status": "REGISTERED",
+      "queue_number": 25
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 40,
+      "status": "REGISTERED",
+      "queue_number": 26
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 47,
+      "status": "REGISTERED",
+      "queue_number": 27
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 55,
+      "status": "REGISTERED",
+      "queue_number": 28
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 6,
+      "status": "WAITLISTED",
+      "queue_number": 29
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 18,
+      "status": "WAITLISTED",
+      "queue_number": 30
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 48,
+      "status": "WAITLISTED",
+      "queue_number": 31
+    },
+    {
+      "event_id": "gfu-003",
+      "member_id": 74,
+      "status": "WAITLISTED",
+      "queue_number": 32
+    },
+
+    {
+      "event_id": "gfu-004",
+      "member_id": 4,
+      "status": "REGISTERED",
+      "queue_number": 1
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 6,
+      "status": "REGISTERED",
+      "queue_number": 2
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 10,
+      "status": "REGISTERED",
+      "queue_number": 3
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 12,
+      "status": "REGISTERED",
+      "queue_number": 4
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 13,
+      "status": "REGISTERED",
+      "queue_number": 5
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 16,
+      "status": "REGISTERED",
+      "queue_number": 6
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 18,
+      "status": "REGISTERED",
+      "queue_number": 7
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 21,
+      "status": "REGISTERED",
+      "queue_number": 8
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 23,
+      "status": "REGISTERED",
+      "queue_number": 9
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 24,
+      "status": "REGISTERED",
+      "queue_number": 10
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 27,
+      "status": "REGISTERED",
+      "queue_number": 11
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 31,
+      "status": "REGISTERED",
+      "queue_number": 12
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 32,
+      "status": "REGISTERED",
+      "queue_number": 13
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 34,
+      "status": "REGISTERED",
+      "queue_number": 14
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 37,
+      "status": "REGISTERED",
+      "queue_number": 15
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 40,
+      "status": "REGISTERED",
+      "queue_number": 16
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 41,
+      "status": "REGISTERED",
+      "queue_number": 17
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 42,
+      "status": "REGISTERED",
+      "queue_number": 18
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 46,
+      "status": "REGISTERED",
+      "queue_number": 19
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 47,
+      "status": "REGISTERED",
+      "queue_number": 20
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 50,
+      "status": "REGISTERED",
+      "queue_number": 21
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 51,
+      "status": "REGISTERED",
+      "queue_number": 22
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 56,
+      "status": "REGISTERED",
+      "queue_number": 23
+    },
+    {
+      "event_id": "gfu-004",
+      "member_id": 59,
+      "status": "REGISTERED",
+      "queue_number": 24
+    },
+
+    {
+      "event_id": "gfu-005",
+      "member_id": 4,
+      "status": "REGISTERED",
+      "queue_number": 1
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 5,
+      "status": "REGISTERED",
+      "queue_number": 2
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 7,
+      "status": "REGISTERED",
+      "queue_number": 3
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 9,
+      "status": "REGISTERED",
+      "queue_number": 4
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 11,
+      "status": "REGISTERED",
+      "queue_number": 5
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 14,
+      "status": "REGISTERED",
+      "queue_number": 6
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 16,
+      "status": "REGISTERED",
+      "queue_number": 7
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 19,
+      "status": "REGISTERED",
+      "queue_number": 8
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 22,
+      "status": "REGISTERED",
+      "queue_number": 9
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 26,
+      "status": "REGISTERED",
+      "queue_number": 10
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 28,
+      "status": "REGISTERED",
+      "queue_number": 11
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 30,
+      "status": "REGISTERED",
+      "queue_number": 12
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 33,
+      "status": "REGISTERED",
+      "queue_number": 13
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 36,
+      "status": "REGISTERED",
+      "queue_number": 14
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 38,
+      "status": "REGISTERED",
+      "queue_number": 15
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 39,
+      "status": "REGISTERED",
+      "queue_number": 16
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 43,
+      "status": "REGISTERED",
+      "queue_number": 17
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 45,
+      "status": "REGISTERED",
+      "queue_number": 18
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 46,
+      "status": "REGISTERED",
+      "queue_number": 19
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 48,
+      "status": "REGISTERED",
+      "queue_number": 20
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 49,
+      "status": "REGISTERED",
+      "queue_number": 21
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 53,
+      "status": "REGISTERED",
+      "queue_number": 22
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 57,
+      "status": "REGISTERED",
+      "queue_number": 23
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 58,
+      "status": "REGISTERED",
+      "queue_number": 24
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 61,
+      "status": "REGISTERED",
+      "queue_number": 25
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 63,
+      "status": "REGISTERED",
+      "queue_number": 26
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 65,
+      "status": "REGISTERED",
+      "queue_number": 27
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 67,
+      "status": "REGISTERED",
+      "queue_number": 28
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 70,
+      "status": "REGISTERED",
+      "queue_number": 29
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 72,
+      "status": "REGISTERED",
+      "queue_number": 30
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 73,
+      "status": "REGISTERED",
+      "queue_number": 31
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 76,
+      "status": "REGISTERED",
+      "queue_number": 32
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 78,
+      "status": "REGISTERED",
+      "queue_number": 33
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 79,
+      "status": "REGISTERED",
+      "queue_number": 34
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 80,
+      "status": "REGISTERED",
+      "queue_number": 35
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 8,
+      "status": "REGISTERED",
+      "queue_number": 36
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 15,
+      "status": "REGISTERED",
+      "queue_number": 37
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 20,
+      "status": "REGISTERED",
+      "queue_number": 38
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 29,
+      "status": "REGISTERED",
+      "queue_number": 39
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 54,
+      "status": "REGISTERED",
+      "queue_number": 40
+    },
+    {
+      "event_id": "gfu-005",
+      "member_id": 64,
+      "status": "REGISTERED",
+      "queue_number": 41
+    }
+  ],
+
+  "grouping_runs": [
+    {
+      "event_id": "gfu-003",
+      "status": "FINALIZED",
+      "seed": 512,
+      "algorithm_version": "v1",
+      "score": 2,
+      "fairness": 6,
+      "evaluations": 600,
+      "teams": [
+        {
+          "number": 1,
+          "members": [17, 25, 35, 43],
+          "score": 0,
+          "explanation": "No repeated partnerships. Mixed EE, Civil, and Biomedical students — all new combinations."
+        },
+        {
+          "number": 2,
+          "members": [52, 60, 68, 78],
+          "score": 0,
+          "explanation": "No repeated partnerships."
+        },
+        {
+          "number": 3,
+          "members": [8, 20, 36, 45],
+          "score": 1,
+          "explanation": "Members 8 (Tobias Keller) and 20 (Nadia Hassan) previously worked together in the Autumn Hackathon."
+        },
+        {
+          "number": 4,
+          "members": [53, 61, 71, 79],
+          "score": 0,
+          "explanation": "No repeated partnerships."
+        },
+        {
+          "number": 5,
+          "members": [11, 26, 33, 44],
+          "score": 0,
+          "explanation": "No repeated partnerships."
+        },
+        {
+          "number": 6,
+          "members": [54, 62, 69, 77],
+          "score": 0,
+          "explanation": "No repeated partnerships."
+        },
+        {
+          "number": 7,
+          "members": [13, 40, 47, 55],
+          "score": 1,
+          "explanation": "Members 13 (Yuki Tanaka) and 55 (Mia Larsen) teamed up during Freshers' Orientation."
+        }
+      ]
+    }
+  ],
+
+  "assignments": [
+    {
+      "event_id": "gfu-003",
+      "team_number": 1,
+      "member_id": 17,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 1,
+      "member_id": 25,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 1,
+      "member_id": 35,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 1,
+      "member_id": 43,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 2,
+      "member_id": 52,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 2,
+      "member_id": 60,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 2,
+      "member_id": 68,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 2,
+      "member_id": 78,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 3,
+      "member_id": 8,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 3,
+      "member_id": 20,
+      "status": "DECLINED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 3,
+      "member_id": 36,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 3,
+      "member_id": 45,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 4,
+      "member_id": 53,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 4,
+      "member_id": 61,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 4,
+      "member_id": 71,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 4,
+      "member_id": 79,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 5,
+      "member_id": 11,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 5,
+      "member_id": 26,
+      "status": "PENDING"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 5,
+      "member_id": 33,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 5,
+      "member_id": 44,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 6,
+      "member_id": 54,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 6,
+      "member_id": 62,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 6,
+      "member_id": 69,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 6,
+      "member_id": 77,
+      "status": "CONFIRMED"
+    },
+
+    {
+      "event_id": "gfu-003",
+      "team_number": 7,
+      "member_id": 13,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 7,
+      "member_id": 40,
+      "status": "WITHDRAWN"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 7,
+      "member_id": 47,
+      "status": "CONFIRMED"
+    },
+    {
+      "event_id": "gfu-003",
+      "team_number": 7,
+      "member_id": 55,
+      "status": "PENDING"
+    }
+  ],
+
+  "completed_event_history": [
+    {
+      "event_id": "gfu-001",
+      "title": "Freshers' Orientation — Team Ice-Breakers",
+      "note": "1st-year students only. Mixed-department teams of 4–5.",
+      "teams": [
+        { "number": 1, "members": [9, 15, 21, 31, 47] },
+        { "number": 2, "members": [25, 42, 52, 61, 66] },
+        { "number": 3, "members": [12, 32, 53, 63, 71] },
+        { "number": 4, "members": [37, 57, 73, 75, 80] }
+      ]
+    },
+    {
+      "event_id": "gfu-002",
+      "title": "IntraCollege Hackathon — Autumn 2026",
+      "note": "60 participants, 12 teams of 5. Cross-department grouping.",
+      "teams": [
+        { "number": 1, "members": [4, 5, 7, 8, 10] },
+        { "number": 2, "members": [11, 12, 13, 14, 15] },
+        { "number": 3, "members": [16, 17, 18, 19, 20] },
+        { "number": 4, "members": [21, 22, 23, 24, 25] },
+        { "number": 5, "members": [26, 27, 28, 29, 30] },
+        { "number": 6, "members": [31, 32, 33, 34, 35] },
+        { "number": 7, "members": [36, 37, 38, 39, 40] },
+        { "number": 8, "members": [41, 42, 43, 44, 45] },
+        { "number": 9, "members": [46, 47, 48, 49, 50] },
+        { "number": 10, "members": [51, 52, 53, 54, 55] },
+        { "number": 11, "members": [56, 57, 58, 59, 60] },
+        { "number": 12, "members": [61, 62, 63, 64, 6] }
+      ]
+    }
+  ]
+}
