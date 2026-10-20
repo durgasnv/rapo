@@ -6,6 +6,8 @@ Base commit: `bcea31c`.
 Seven issues were reproduced: four application defects and three CI/test defects.
 Each received a focused fix; the ten investigation areas below distinguish
 confirmed findings from risks that were tested without reproducing a defect.
+The CI follow-up dated 2026-10-20 below records an additional development-mode
+test-fixture defect missed by the original production-mode browser verification.
 
 ## Scope and method
 
@@ -353,3 +355,37 @@ The existing Starlette/httpx deprecation warning remains; dependencies were not
 changed merely to suppress it.
 The browser harness also warned about its temporary `SSL_CERT_FILE` before the
 SMTP fixture created that certificate; the subsequent TLS reset journey passed.
+
+## CI follow-up — 2026-10-20
+
+### B8 — Catalog retry fixture consumes its outage during Strict Mode replay
+
+Severity: **Medium** (CI/test reliability). The application retry behavior is
+unchanged.
+
+Actual failure: [CI run 39231018698](https://github.com/durgasnv/rapo/actions/runs/39231018698),
+commit `b899042`, passed all **200 backend tests** and **20 browser tests**. Only
+`event discovery can retry a failed request` failed, including both CI retries,
+waiting for its injected error message to appear.
+
+Root cause: the catalog mock automatically changed from HTTP 503 to success after
+one request. CI starts `next dev`, where Strict Mode can replay the initial effect.
+The first failed request can belong to a cancelled effect; the following request
+succeeds, so the UI correctly never displays the expected error. The earlier local
+full browser run used `next start` and did not exercise that development replay.
+
+Reproduction: run `event-dashboard.spec.ts` with the committed development-server
+configuration and the old one-request outage. The CI log records the missing alert
+on every attempt; the rest of the browser suite passed.
+
+Fix: keep the mocked catalog unavailable until the test observes the error, then
+explicitly restore it before clicking `Try again`. All existing error and recovered
+event-card assertions remain. No app code, Strict Mode settings, retry counts or
+timeouts changed.
+
+Local regression: the unchanged retry assertions pass with `next dev --webpack`
+and Strict Mode enabled: **1 passed**, zero retries. This focused frontend-only
+check mocks the catalog and does not require a database/API; full API/database
+coverage runs in CI. Formatting and diff checks passed. The pushed fix's full
+workflow result is available in the
+[branch CI runs](https://github.com/durgasnv/rapo/actions?query=branch%3Adebug%2Frepository-audit-2026-10-19).

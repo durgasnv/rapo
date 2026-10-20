@@ -4,7 +4,7 @@ import type { EventData } from "../../apps/web/lib/api";
 
 // A controlled catalog keeps UI tests independent of other tests' published events.
 // PostgreSQL integration tests verify the real API's filtering and sort ordering.
-async function catalog(page: Page, failFirst = false) {
+async function catalog(page: Page, outage?: { unavailable: boolean }) {
   const events: EventData[] = Array.from({ length: 15 }, (_, index) => ({
     id: randomUUID(),
     organizer_id: randomUUID(),
@@ -28,8 +28,7 @@ async function catalog(page: Page, failFirst = false) {
   await page.route("**/api/events?*", async (route) => {
     const url = new URL(route.request().url());
     requests.push(url);
-    if (failFirst) {
-      failFirst = false;
+    if (outage?.unavailable) {
       await route.fulfill({
         status: 503,
         json: { detail: "Event discovery is temporarily unavailable." },
@@ -156,11 +155,15 @@ test("filters validate dates, show empty results, clear, and fit a mobile viewpo
 });
 
 test("event discovery can retry a failed request", async ({ page }) => {
-  await catalog(page, true);
+  // Strict Mode may replay the initial effect; keep the outage active until
+  // the UI observes it instead of consuming it on a single request.
+  const outage = { unavailable: true };
+  await catalog(page, outage);
   await page.goto("/events");
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "Event discovery is temporarily unavailable",
   );
+  outage.unavailable = false;
   await page.getByRole("button", { name: "Try again", exact: true }).click();
   await expect(page.locator("article")).toHaveCount(12);
 });
