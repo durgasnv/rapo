@@ -123,3 +123,97 @@ dt {
 dd {
   margin-top: 0.35rem;
 }
+
+/* ---------------------------------------------------------------------------
+ * Landing page — "Modernist" visual system.
+ * Every rule is scoped to `.landing` so other routes are untouched.
+ * ------------------------------------------------------------------------- */
+.landing {
+  --color-bg: #f3f2f2;
+  --color-text: #201e1d;
+  --color-accent: #ec3013;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-100: #fff2ef;
+  --color-accent-800: #7c1405;
+  --color-neutral-200: #eae7e7;
+  --color-rule: color-mix(in srgb, #201e1d 9%, transparent);
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html:has(.landing),
+body:has(.landing) {
+  background: #f3f2f2;
+}
+
+/* Layered as base so Tailwind hover utilities on buttons still win. */
+@layer base {
+  .landing a:hover {
+    color: var(--color-accent-700);
+  }
+  .landing ::selection {
+    background: #ffc4b8;
+  }
+}
+
+/* Unlayered on purpose: these must beat the global focus ring and any
+ * `rounded-*` utilities inside embedded components (e.g. ServiceStatus). */
+.landing *,
+.landing *::before,
+.landing *::after {
+  border-radius: 0;
+}
+
+.landing :focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.landing .landing-closing :focus-visible {
+  outline-color: #fff;
+}
+
+.landing .landing-status section {
+  margin-top: 16px;
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+}
+
+.landing .landing-status button {
+  background: var(--color-text);
+  text-align: left;
+}
+
+.landing .landing-status pre {
+  color: var(--color-accent-700);
+}
+
+/* Hero starts hidden so there is no flash before GSAP takes over. If the
+ * motion script never runs, the failsafe animation reveals it after 4s. */
+@media (prefers-reduced-motion: no-preference) {
+  .landing [data-hero-line] {
+    transform: translateY(110%);
+    animation: landing-failsafe 0s 4s forwards;
+  }
+  .landing [data-hero-fade] {
+    opacity: 0;
+    animation: landing-failsafe 0s 4s forwards;
+  }
+  .landing[data-motion="ready"] [data-hero-line],
+  .landing[data-motion="ready"] [data-hero-fade] {
+    animation: none;
+  }
+}
+
+@keyframes landing-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
